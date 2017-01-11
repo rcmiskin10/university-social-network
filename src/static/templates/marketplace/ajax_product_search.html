@@ -1,0 +1,75 @@
+{% load staticfiles %}	
+
+
+				{% for item in category_products %}
+        <div id='electronic_{{ item.id }}'>
+		          <div class='media'>
+		          <div class='media-left'>
+		          	{% if item.image %}
+                            <img src='{{ item.image.url }}' width="100" height="100" /><br>
+                            {% endif %}
+                            {% if not item.image %}
+                            <img src='{% static "img/product.png" %}' width="100" height="100" /><br>
+                            {% endif %}
+		          </div><!--media-left-->
+		          <div class='media-body'>
+		              <b>{{ item.title }}</b> - ${{ item.price }}<br>
+		              {{ item.description }}<br><br>
+		              ~ <a href='/profile/{{ product.owner.id }}/'>{{ item.owner.first_name }} {{ item.owner.last_name }}</a>
+		          </div><!--media-body-->
+		          <div class='media-right'>
+		              {% if not request.user == item.owner %}
+                  <a href='/products/{{ item.id }}/messages/'><button class="btn btn-primary" type="button">Message</button></a>
+                  {% endif %}
+                  <br><br>
+                  {% if request.user == item.owner %}
+                  <form id='sold' action='/sold/' method='POST'>{% csrf_token %}
+                    <input type='hidden' value='{{ item.id }}' name='product_id'>
+                    <button class="btn btn-success" type="submit">Mark as Sold</button>
+                  </form>
+
+                  {% endif %}
+		            </div><!--div media-right-->
+		          
+		          </div><!--media-->
+		          <hr>
+            </div>
+          		{% endfor %}
+
+          	{% for product in products %}
+          	{% if not product in category_products %}
+        <div id='electronic_{{ item.id }}'>
+		          <div class='media'>
+		          <div class='media-left'>
+		          	{% if product.image %}
+                            <img src='{{ product.image.url }}' width="100" height="100" /><br>
+                            {% endif %}
+                            {% if not product.image %}
+                            <img src='{% static "img/product.png" %}' width="100" height="100" /><br>
+                            {% endif %}
+		          </div><!--media-left-->
+		          <div class='media-body'>
+		              <b>{{ product.title }}</b> - ${{ product.price }}<br>
+		              {{ product.description }}<br><br>
+		              ~ <a href='/profile/{{ product.owner.id }}/'>{{ product.owner.first_name }} {{ product.owner.last_name }}</a>
+		          </div><!--media-body-->
+		          <div class='media-right'>
+		              {% if not request.user == product.owner %}
+                  <a href='/products/{{ product.id }}/messages/'><button class="btn btn-primary" type="button">Message</button></a>
+                  {% endif %}
+                  <br><br>
+                  {% if request.user == product.owner %}
+                  <form id='sold' action='/sold/' method='POST'>{% csrf_token %}
+                    <input type='hidden' value='{{ product.id }}' name='product_id'>
+                    <button class="btn btn-success" type="submit">Mark as Sold</button>
+                  </form>
+
+                  {% endif %}
+		            </div><!--div media-right-->
+		          
+		          </div><!--media-->
+		          <hr>
+            </div>
+            {% endif %}
+          		{% endfor %}
+		

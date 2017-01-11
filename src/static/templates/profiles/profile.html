@@ -1,0 +1,1848 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+<script>
+{% block jquery %}
+
+$('.course-link').click(function(e){
+  e.preventDefault();
+  $(".club").hide();
+  $(".team").hide();
+  $(".frat").hide();
+  $('.course').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+
+$('#post-link').click(function(e){
+  e.preventDefault();
+  $("#about").hide();
+  $("#edit").hide();
+  $('#posts').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+
+
+
+$('#about-link').click(function(e){
+  e.preventDefault();
+  $("#posts").hide();
+  $("#edit").hide();
+  $('#about').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+
+$('#overview-link').click(function(e){
+  e.preventDefault();
+  $('#organizations').hide();
+  $('#work').hide();
+  $('#interest').hide();
+  $('#overview').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+$('#organizations-link').click(function(e){
+  e.preventDefault();
+  $('#overview').hide();
+  $('#work').hide();
+  $('#interest').hide();
+  $('#organizations').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+
+$('#interest-link').click(function(e){
+  e.preventDefault();
+  $('#overview').hide();
+  $('#work').hide();
+  $('#organizations').hide();
+  $('#interest').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+
+$('#bio-link').click(function(e){
+  e.preventDefault();
+  
+  $('#edit-bio').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+
+$('#edit-work-link').click(function(e){
+  e.preventDefault();
+  $('#add-work').hide();
+  $('#edit-work').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+
+$('#add-interest-link').click(function(e){
+  e.preventDefault();
+  
+  $('#add-interest').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+
+$('#edit-profile-link').click(function(e){
+  e.preventDefault();
+  
+  $('#edit-profile-info').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+
+$('#edit-image-link').click(function(e){
+  e.preventDefault();
+  
+  $('#edit-image-info').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+
+$('#add-work-link').click(function(e){
+  e.preventDefault();
+  $('#edit-work').hide();
+  $('#add-work').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+
+$('#work-link').click(function(e){
+  e.preventDefault();
+  $('#overview').hide();
+  $('#organizations').hide();
+  $('#interest').hide();
+  $('#work').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+
+$('.club-link').click(function(e){
+  e.preventDefault();
+  $(".course").hide();
+  $(".team").hide();
+  $(".frat").hide();
+  $('.club').fadeToggle();
+
+  //$(this).next('.about-me').fadeToggle();
+
+})
+
+$('.team-link').click(function(e){
+  e.preventDefault();
+  $(".course").hide();
+  $(".club").hide();
+  $(".frat").hide();
+  $('.team').fadeToggle();
+  
+  //$(this).next('.about-me').fadeToggle();
+
+})
+
+$('.frat-link').click(function(e){
+  e.preventDefault();
+  $(".course").hide();
+  $(".club").hide();
+  $(".team").hide();
+  
+  $('.frat').fadeToggle();
+  
+  //$(this).next('.about-me').fadeToggle();
+
+})
+
+$('.edit_schedule').click(function(e){
+  
+  e.preventDefault();
+  
+  $(this).next('.schedule').fadeToggle();
+  //$('.reply_comment').fadeToggle();
+})
+
+$(function() {
+    $( ".datepicker" ).datepicker();
+  });
+
+$('.all').click(function(e){
+  e.preventDefault();
+  var id = $(this).attr('id');
+  $("#limit-child-comments_" + id).hide();
+  $(this).hide();
+  
+  $('#child-comments_' + id).fadeToggle();
+  
+  //$(this).next('.about-me').fadeToggle();
+
+})
+
+{% endblock %}
+</script>
+{% block content %}
+<style>
+.child-comments{
+  display:none;
+}
+#main{
+  padding-top:75px;
+}
+.sched{
+  background-color:#E0E0E0;
+  border: none;
+  color:black;
+
+}
+.schedule {
+  display:none;
+    }
+
+.panel{
+  border-radius: 0px;
+}
+.club{
+  display:none;
+}
+#organizations{
+  display:none;
+}
+
+#edit-bio{
+  display:none;
+}
+
+#edit-work{
+  display:none;
+}
+
+#edit-profile-info{
+  display:none;
+}
+#edit-image-info{
+  display:none;
+}
+
+#add-work{
+  display:none;
+}
+#interest{
+  display:none;
+}
+#add-interest{
+  display:none;
+}
+
+#about{
+  display:none;
+}
+#work{
+  display:none;
+}
+
+#edit{
+  display:none;
+}
+.team{
+  display:none;
+}
+.frat{
+  display:none;
+}
+#list{
+  padding-top:0px;
+  padding-bottom:0px;
+  background-color:#E0E0E0;
+}
+
+.assg{
+  background-color:#E0E0E0;
+  border: none;
+  color:black;
+
+}
+.stud_course{
+  background-color:white;
+  border: none;
+  color:black;
+
+}
+.black{
+  background-color:black;
+  color:white;
+
+}
+
+.link-form {
+        display:none;
+   }
+.image-form {
+        display:none;
+   }
+.top{
+  padding-top:0px;
+}
+</style>
+<!--main-->
+<div class="container" id="main">
+   <div class="row">
+
+   <div class="col-md-3 col-sm-5">
+        <div class="panel panel-default">
+          
+        <div class="top panel-body">
+            <div style='text-align:center;' id='info-error'>
+
+            </div>
+            <div style='text-align:center;' id='img-error'>
+
+            </div>
+              <h3 style='text-align:center;'>{{ single_user.first_name }} {{ single_user.last_name }}</h3>
+                <div style="text-align:center;">
+              {% for item in single_user.userpicture_set.all|slice:"1" %}
+                    
+                    {% if item.image %}
+                        
+                           
+                            <img src='{{ item.image.url }}' width="200" height="200" />
+                       
+                    {% endif %}
+              {% endfor %}
+                 {% if not single_user.userpicture_set.all %}
+            
+            
+                    <img src='{% static "img/default-prof.png" %}' width="150" height="150" />
+                
+                  {% endif %}
+                
+            
+            
+            
+                  
+                    
+                        <br><br>
+                        {% if request.user == single_user %}<a href='#' id='edit-image-link'>Change Image</a>{% endif %}
+                      <div id='edit-image-info'><br>
+                        <form id='edit-image' method='POST' action='/edit/profile_image/' enctype="multipart/form-data"> {% csrf_token %}
+                       
+                        <div style='color:black; text-align:center;'>
+                         {{ formset_pic.management_form }}
+                         {% for form in formset_pic %}
+                        {% crispy form form.helper %}
+                        {% endfor %}
+                      </div>
+                      </form>
+                      </div>
+                        <br>
+                       
+                       {% if not request.user == single_user %}<a href='/profile/{{ single_user.id }}/messages/'><button class='btn btn-success btn-lg'>Message</button></a>{% endif %}
+                        
+                        
+                   
+                    
+                    <br><br>
+                    {% for item in profile_info %}
+                    <ul class="nav nav-pills nav-stacked">
+                      
+                      <li><b>Year:</b> {{ item.year }}</li>
+                      <li><b>Major:</b> {{ item.major }}</li>
+                      <li><b>Minor:</b> {{ item.minor }}</li>
+                      <li><b>From:</b> {{ item.loc_from }}</li>
+                            
+                            
+                    </ul>
+
+                    {% endfor %}
+                    <br>
+                    {% if request.user == single_user %}<a href='#' id='edit-profile-link'>Edit Info</a>{% endif %}
+                  <div id='edit-profile-info'><br>
+          
+                  <form id='edit-profile' method='POST' action='/edit/profile-info/' enctype="multipart/form-data"> {% csrf_token %}
+                    
+                    
+                     {{ formset_info.management_form }}
+                     {% for item in formset_info %}
+                  
+                    
+                    {% crispy item item.helper %}
+                    {% endfor %}
+
+                    
+            </form>
+            
+          </div><!--edit-bio-->
+                    </div>
+                        
+            </div>
+      </div>
+        
+     
+   
+  </div>
+
+    <div class="col-md-6 col-sm-8">
+          
+              
+<div class="panel panel-default">
+<div class="panel-body">
+<ul class="nav nav-pills nav-justified">
+ 
+                <li role="presentation" class="active"><a id='post-link' href="#">Posts</a></li>
+                <li role="presentation" ><a id='about-link' href="#">About</a></li>
+                
+                
+              </ul>
+
+</div>
+</div>
+
+<div id='posts'>
+            <div class="panel panel-default">
+<div class="panel-body">
+
+
+
+<a href='#' class='post'><img src="{% static 'img/text.png' %}" width="30" height="30"></a>
+<a href='#' class='tube'><img src="{% static 'img/youtube-icon.png' %}" width="30" height="30"></a>
+<a href='#' class='pic'><img src="{% static 'img/image.png' %}" width="25" height="25"></a>
+</div>
+
+
+<div class="panel-footer">
+  <div id='post-error'></div>
+<div class='main-form'>
+  
+    
+      
+    
+    
+<form method='POST' action='/profile/{{ single_user.id }}/' name='test' id='post-form' class='post-form' enctype='multipart/form-data'>{% csrf_token %}
+        
+        <div class='input-group'>
+       
+            <input name='mypost' type='text' class='main form-control' placeholder='Have something to say?'>
+            
+            <span class='input-group-btn'>display: flex;
+            
+                
+                <button class=' btn btn-primary' type='submit'>Post</button>
+            </span>
+            
+        </div>
+        
+       
+</form>
+
+
+</div>
+<div class='link-form'>
+
+    <form id='link-post' class='link-post' method='POST' action='/link/{{ course.slug }}/' enctype='multipart/form-data'> {% csrf_token %}
+                
+                {% crispy link_mypost_form link_mypost_form.helper %}
+
+    </form>
+
+</div>
+
+<div class='image-form'>
+
+    <form id='image-post' class='image-post' method='POST' action='/image/{{ course.slug }}/' enctype='multipart/form-data'> {% csrf_token %}
+                
+                {% crispy image_mypost_form image_mypost_form.helper %}
+
+    </form>
+
+</div>
+<div style='color:red;' id='link-error'>
+   {{ form.non_field_errors }}
+
+</div>
+
+
+</div><!--panel-footer-->
+</div> <!--default panel-->
+
+<table class='table'>
+   
+   <div id='this_post'>
+    
+    </div> 
+    
+{% for post in posts %}
+    
+  <div id='post_{{ post.id }}' >
+   
+    <div class="panel panel-default">
+            <div class='panel-body'> 
+                <div class="media">
+
+                {% for item in post.user.userpicture_set.all %}
+                    
+                    {% if item.image %}
+                        
+                            <div class="media-left">
+                            <img src='{{ item.image.url }}' width="40" height="40" />
+                        </div>
+                        
+                    {% endif %}
+                {% endfor %}
+                    {% if not post.user.userpicture_set.all %}
+           <div class="media-left">
+                    <img style='float:left' src='{% static "img/default-prof.png" %}' width="40" height="40" />
+                    </div>
+            {% endif %}
+                
+            
+
+                    <div class="media-body">
+                    
+                        <a href='/profile/{{ post.user.id }}/'>
+                        <b>{{ post.user.first_name }} {{ post.user.last_name }}</b>
+                        </a>
+                        <br>
+                        <small>{{ post.timestamp }}</small>
+                    </div>
+
+                    
+                    {% if post.event %}
+                    <div class='media-right'>
+                      
+                      {% if post.event == 'Party' %}
+                       <img src='{% static "img/party.png" %}' width="50" height="50" />
+                       {% endif %}
+                       {% if post.event == 'Game' %}
+                       <img src='{% static "img/sports.png" %}' width="50" height="50" />
+                       {% endif %}
+                       {% if post.event == 'General Event' %}
+                       <img src='{% static "img/event.png" %}' width="40" height="50" />
+                       {% endif %}
+                    </div>
+                    {% endif %}
+                    {% if post.user == request.user %}
+                    <div class='media-right'>
+                    <form id='delete_post' method='POST' action='/delete_post/'>{% csrf_token %}
+                          <input type='submit' class='stud_course btn btn-primary btn-xs' value='Delete Post'>
+                         <input type='hidden' value='{{ post.id }}' name='post_id'>
+                    </form><br>
+                  </div><!--media-right-->
+                  {% endif %}
+
+                    </div>
+                    
+                    {% if post.links %}
+                    <br>
+                    <iframe style='padding-bottom:20px;'class="col-lg-12 col-md-12 col-sm-12 col-xs-12"  height="315" src="{{ post.links }}" frameborder="0" allowfullscreen></iframe>
+                
+                    {% endif %}
+
+                    {% if post.image %}
+                    <br>
+                    <img style='padding-bottom:20px;' class="col-lg-12 col-md-12 col-sm-12 col-xs-12" src='{{ post.image.url }}' height="315" />
+                
+                    {% endif %}
+            {% if post.event %}
+            <h4>{{ post.event }} - <small style='color:black;'>{{ post.date }} @ {{ post.start_time }} - {{ post.end_time }}</small></h4> 
+            {% endif %}   
+        <br>{{ post.get_mypost|linebreaksbr }} 
+
+            </div><!-- panel-body-->
+            
+            <div class="panel-footer">
+            
+            {% if not post.is_child %}
+        
+            
+                <div id='reply_post_{{ post.id }}'>
+                
+                </div>
+                <div id='limit-child-comments_{{ post.id }}'>
+                {% for child in post.get_children|slice:":4" %}
+                  <div class="media">
+                    {% for item in child.user.userpicture_set.all %}
+                    {% if item.image %}<div class="media-left"> <img src='{{ item.image.url }}' class='media-object' width="40" height="40" /> </div>{% endif %}{% endfor %}{% if not child.user.userpicture_set.all %}<div class="media-left"><img class='media-object' src='{% static "img/default-prof.png" %} ' width="40" height="40" /> </div>{% endif %} <div class="media-body"> <small><b><a href='/profile/{{ child.user.id }}/'>{{ child.user.first_name }} {{ child.user.last_name}}</b></a></small> <small>{{ child.get_mypost|linebreaksbr }}</small><br><small>{{child.timestamp}}</small></div>
+                  </div>
+                {% endfor %}
+              </div><!--child-comments-->
+              <div id='child-comments_{{ post.id }}' class='child-comments'>
+                  {% for child in post.get_children %}
+
+                    <div class="media">
+                    {% for item in child.user.userpicture_set.all %}
+                    {% if item.image %}<div class="media-left"> <img src='{{ item.image.url }}' class='media-object' width="40" height="40" /> </div>{% endif %}{% endfor %}{% if not child.user.userpicture_set.all %}<div class="media-left"><img class='media-object' src='{% static "img/default-prof.png" %} ' width="40" height="40" /> </div>{% endif %} <div class="media-body"> <small><b><a href='/profile/{{ child.user.id }}/'>{{ child.user.first_name }} {{ child.user.last_name}}</a></b></small> <small>{{ child.get_mypost|linebreaksbr }}</small><br><small>{{child.timestamp}}</small></div>
+                  </div>
+
+                {% endfor %}
+
+                </div>
+                <br>
+                {% if post.get_children.count > 4 %}
+                <a href='#' class='all' id='{{ post.id }}'>See all</a>
+                {% endif %}
+                
+          
+                
+          
+            {% endif %}
+        
+                <form style='padding-top:10px;' method='POST' action='/home/' name='test' id='reply_form_{{ post.id }}' class='reply_form_{{ post.id }}' enctype='multipart/form-data'> {% csrf_token %}
+                    <input type='hidden' name='parent_id' value='{{ post.id }}'>
+                    <div class='input-group'>
+                            {% for item in request.user.userpicture_set.all %}
+                            {% if item.image %}
+                                <img style='float:left' src='{{ item.image.url }}' width='35' height='35'/>
+                                {% endif %}
+                                {% endfor %}
+                                {% if not request.user.userpicture_set.all %}
+           
+                    <img style='float:left' src='{% static "img/default-prof.png" %}' width="35" height="35" />
+                    
+            {% endif %}
+
+                            
+                            
+                            <div style='overflow: hidden; padding-left: .5em;'>
+                                <input name='mypost' type='text' class='form-control' placeholder='Reply to comment'>
+                            </div>
+                        <span class='input-group-btn'><button class='btn btn-primary' type='submit'>Post</button></span>
+                    </div><!--div input-group-->
+                </form>
+                
+            </div><!--div panel-footer-->
+        </div><!--div panel-panel-default-->
+        
+    
+          
+       
+        
+        
+        
+        
+    <br>
+  </div>
+{% endfor %}
+ 
+
+</table>
+      
+
+   </div>  <!--posts-->   
+  
+  <div id='about'>
+    <div class="panel panel-default">
+            <div class='panel-body'>
+              <div style='border-right:1px solid grey;'class='col-lg-3'>
+                 <ul class="nav nav-pills nav-stacked">
+                    <li role="presentation" class="active"><a id='overview-link' href="#">Bio</a></li>
+                    <li role="presentation"><a id='organizations-link'href="#">Organizations</a></li>
+                    <li role="presentation"><a id='work-link' href="#">Work</a></li>
+                    <li role="presentation"><a id='interest-link' href="#">Interests</a></li>
+                  </ul>
+              </div><!--col-lg-3-->
+              <div id='overview' class='col-lg-9'>
+                <div id='bio-error'>
+                </div>
+                <h4>About {{ single_user.first_name }}</h4>
+                <hr>
+                <div id='bio-input'>
+
+                </div>
+                <div id='bio-text'>
+                  {% if not bio_info %}
+                    {{ single_user.first_name }} needs to add a Bio.
+                  {% endif %}
+                  {% for item in bio_info %}
+                    {{ item.bio|linebreaks }}
+                  {% endfor %}
+                </div>
+                  <br>
+                  <br>
+                  {% if request.user == single_user %}<a href='#' id='bio-link'>Edit Bio</a>{% endif %}
+                  <div id='edit-bio'><br>
+                    <h4>Edit Bio</h4>
+                  <form id='bio' method='POST' action='/edit/bio/' enctype="multipart/form-data"> {% csrf_token %}
+                    
+                    
+                     {{ formset_bio.management_form }}
+                     {% for item in formset_bio %}
+                  
+                    
+                    {% crispy item item.helper %}
+                    {% endfor %}
+
+                    
+            </form>
+
+          </div><!--edit-bio-->
+              </div><!--col-lg-9-->
+              <div id='organizations' class='col-lg-9'>
+
+                {% if studentcourses %}
+                <h4>Courses:</h4>
+
+                 {% for item in studentcourses %}
+                 <a href='/courses/{{ item.course_id.slug }}/'>{{ item.course_id.course_name }}</a><br>
+
+                 {% endfor %}
+                 {% endif %}
+
+                 {% if my_clubs %}
+                <h4>Clubs:</h4>
+                 {% for item in my_clubs %}
+                 <a href='/clubs/{{ item.club_id.id }}/'>{{ item.club_id.club_name }}</a><br>
+
+                 {% endfor %}
+                 {% endif %}
+
+                 {% if my_teams %}
+                <h4>Teams:</h4>
+                 {% for item in my_teams %}
+                 <a href='/teams/{{ item.team_id.id }}/'>{{ item.team_id.name }}</a><br>
+
+                 {% endfor %}
+                 {% endif %}
+
+                 {% if my_frats %}
+                <h4>Frats:</h4>
+                 {% for item in my_frats %}
+                 <a href='/frats/{{ item.frat_id.id }}/'>{{ item.frat_id.name }}</a><br>
+
+                 {% endfor %}
+                 {% endif %}
+                 
+              </div><!--orgs col-lg-9-->
+
+              <div id='work' class='col-lg-9'>
+                <div id='work-error'>
+
+                  </div>
+                <div id='work-text'>
+                  
+                  {% if not work_info %}
+                    {{ single_user.first_name }} needs to add Work Info.
+                  {% endif %}
+                    
+                  {% for item in work_info %}
+                  
+                  <div class='media'>
+                    <div id='work_{{ item.id }}'>
+                  <div class='media-body'>
+                    {{ item.position }} - <b>{{ item.company }}</b> <br> {{ item.location }} -
+                    {{ item.start_date }} - {{ item.end_date }}<br>
+                    </div><!--media-object-->
+                    {% if request.user == single_user %}
+                    <div class='media-right'>
+                     <form id='delete_work' method='POST' action='/delete_work/'>{% csrf_token %}
+                          <input type='submit' class='stud_course btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.id }}' name='work_id'>
+              </form>
+                  </div><!--media-right-->{% endif %}
+                  <hr>
+                  </div><!--div work-id--> 
+                  </div><!--media-->
+                 
+                  {% endfor %}
+                  
+                
+                
+                </div><!--work-text-->
+                <div id='work-input'>
+
+                </div>
+                  {% if work_info %}{% if request.user == single_user %}<a href='#' id='edit-work-link'>Edit Work</a>|{% endif %} {% endif %}
+                  {% if request.user == single_user %}<a href='#' id='add-work-link'>Add Work</a>{% endif %}
+                  <div id='edit-work'><br>
+                    <h4>Edit Work </h4>
+                <form id='work-form' method='POST' action='/edit/work/' enctype="multipart/form-data"> {% csrf_token %}
+                    
+                    
+                     {{ formset_work.management_form }}
+                     {% for item in formset_work %}
+                  
+                 <h5> {{ item.instance.company }} - {{ item.instance.position }}</h5>
+                    
+                    {{ item|crispy  }}
+                    <br>
+                    
+                    {% endfor %}
+                    <input class='btn btn-primary' type='submit' value='Submit'/>
+                    
+                </form>
+                 </div><!--edit-work-->
+                  <div id='add-work'><br>
+                <form id='add-work-form' method='POST' action='/add/work/' enctype="multipart/form-data"> {% csrf_token %}
+                    
+                    
+                     
+                  <h4>Add Work</h4> 
+                    
+                    {{ add_work_form |crispy  }}
+                    <br>
+                    
+                    
+                    <input class='btn btn-primary' type='submit' value='Submit'/>
+                    
+                </form>
+                 </div><!--edit-work-->
+
+                  <hr>
+                
+                <br>
+                <br>
+                
+                
+              </div><!--orgs col-lg-9-->
+
+
+           <div id='interest' class='col-lg-9'>
+            <div id='interest-error'>
+            </div>
+            {% for item in interest_info %}
+           
+           
+              <button id='interest_{{ item.id }}' class='btn btn-success' type='button' >{{ item.interest }} {% if request.user == single_user %}<form id='delete_interest' method='POST' action='/delete_interest/'>{% csrf_token %}
+                          <input style='background-color:#5cb85c;color:white;'type='submit' class='stud_course btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.id }}' name='interest_id'>
+              </form>{% endif %}</button>
+           
+            {% endfor %}
+            <div id='interest-ajax'>
+
+            </div>
+            
+            <br><hr>
+
+
+            {% if request.user == single_user %}<a href='#' id='add-interest-link'>Add Interest</a>{% endif %}
+
+            <div id='add-interest'>
+
+              <form id='add-interest-form' method='POST' action='/add/work/' enctype="multipart/form-data"> {% csrf_token %}
+                    
+                    
+                     
+                  <h4>Add Interest</h4> 
+                    
+                    {{ add_interest_form |crispy  }}
+                    <br>
+                    
+                    
+                    <input class='btn btn-primary' type='submit' value='Submit'/>
+                    
+                </form>
+
+            </div><!--add-interest-->
+           </div>
+            </div>
+          </div>
+  </div> <!--about--> 
+
+  
+    </div><!--div col -->
+
+
+    <div class="col-md-3 col-sm-5">
+         <div class="panel panel-default">
+           
+        <div class="panel-body">
+              <h4 style="text-align:center;">Schedule</h4>
+
+              <div id='sched-error'></div>
+<hr>
+<a href='#' class='edit_schedule'>Add to Schedule</a>
+              <div class='schedule' style='text-align:center;'>
+              <form id='schedule' method='POST' action='/main_schedule/' enctype='multipart/form-data'> {% csrf_token %}
+              
+                
+              {{ schedule_form.duedate }}<br>
+              {{ schedule_form.text }}<br>
+              {{ schedule_form.management_form }}
+              
+              
+              
+              <input class='btn btn-success' type='submit' value='Add'/>
+              </form>
+            
+
+          </div><br><br>
+
+                  {% for item in f %}
+
+
+                
+<div id='assign_{{ item.0 }}' class="panel panel-default">
+          
+        <div id ='list'class="panel-body">
+
+          <div style='display:flex;'class="row">
+            <div style='color:white;background-color:red;'class='col-lg-4'>
+            <h5>{{ item.1|date:"M d, Y" }}</h5>
+          </div>
+            <div style='background-color:#E0E0E0;' class='col-lg-8'>
+            
+           {{ item.2 }} <br> {{ item.3 }}
+           {% if item.4 == 'main' %}
+           <form id='delete-main-schedule' method='POST' action='/delete_main_sched/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='sched_id'></form>
+          {% endif %}
+           {% if item.4 == 'team' %}
+           <form id='delete-team-schedule' method='POST' action='/delete_team_sched/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='sched_id'></form>
+          {% endif %}
+          {% if item.4 == 'frat' %}
+           <form id='delete-frat-schedule' method='POST' action='/delete_frat_sched/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='sched_id'></form>
+          {% endif %}
+          {% if item.4 == 'club' %}
+           <form id='delete-club-schedule' method='POST' action='/delete_sched/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='sched_id'></form>
+          {% endif %}
+          {% if item.4 == 'course' %}
+
+           <form id='delete-course-schedule' method='POST' action='/delete_assign/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='assign_id'></form>
+          {% endif %}
+          </div>
+          </div>
+        
+    </div>
+
+</div>
+{% endfor %}
+<div style='text-align:center;'class="pagination">
+    <span class="step-links">
+        {% if f.has_previous %}
+            <a href="?page={{ f.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ f.number }} of {{ f.paginator.num_pages }}.
+        </span>
+
+        {% if f.has_next %}
+            <a href="?page={{ f.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+            </div>
+
+
+
+      </div>
+        
+  
+ 
+        
+  </div><!--/row-->
+  
+  
+</div><!--/main-->
+<script>
+
+$(function() {
+    $( ".datepicker" ).datepicker();
+  });
+
+$('.tube').click(function(e){
+  
+  e.preventDefault();
+  $(".main-form").hide();
+  $(".image-form").hide();
+  $('.link-form').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+  
+})
+
+$('.post').click(function(e){
+  
+  e.preventDefault();
+  $(".link-form").hide();
+  $(".image-form").hide();
+  $('.main-form').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+  
+})
+$('.pic').click(function(e){
+  
+  e.preventDefault();
+  $(".link-form").hide();
+  $(".main-form").hide();
+  $('.image-form').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+  
+})
+
+$(function() {
+  $("#search").autocomplete({
+    source: "/api/search/",
+    minLength: 2,
+    select: function( event , ui ) {
+            document.location.href = ui.item.url ;
+        }
+  });
+});
+
+$('form').live('submit', function(event) {
+
+    event.preventDefault();
+    
+    var $form = $(this);
+    var id = $form.attr('id');
+    var formData = $form.serialize();
+    
+    if ($form.attr("id") == "delete_post"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_post/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                id = json.id
+                $("#post_" + id).hide();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/main_schedule/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            var $response = json.response
+            if ($response){
+                document.location.reload();
+                
+            }
+            else{
+              $("#sched-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div>")).fadeIn(2000).fadeOut(3000);
+                $('#schedule')[0].reset();
+            }
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete-main-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_main_sched/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                document.location.reload();
+                
+            
+             
+
+        },
+        error: function(data) {
+          
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete-course-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_assign/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                document.location.reload();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+    if ($form.attr("id") == "delete-club-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_sched/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+             
+                document.location.reload();
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete-frat-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_frat_sched/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                document.location.reload();
+                
+            
+             
+
+        },
+        error: function(data) {
+          
+            
+        }
+    });
+    }
+    if ($form.attr("id") == "delete-team-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_team_sched/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                document.location.reload();
+                
+            
+             
+
+        },
+        error: function(data) {
+          
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "edit-image"){
+
+    
+    var formData = new FormData(this);
+    $.ajax({
+        type:'POST',
+        url: "/edit/profile-image/",
+        data:formData,
+        cache:false,
+        contentType: false,
+        processData: false,
+        
+        success: function (json) {
+          var $response = json.response
+          if ($response){  
+         
+            
+          document.location.reload();
+                
+          }
+
+          else{
+            $("#img-error").html($("<div class='alert alert-danger' role='alert'>Please try again!</div></p>")).fadeIn(2000).fadeOut(6000);
+                $('#edit-profile')[0].reset();
+          }
+             
+
+        },
+        error: function(data) {
+            
+        }
+    });
+    }
+    if ($form.attr("id") == "edit-profile"){
+
+    
+    $.ajax({
+        type: "POST",
+        url: "/edit/profile-info/",
+        dataType: "json",
+        data: formData,
+        
+        success: function (json) {
+          var $response = json.response
+          if ($response){  
+         
+            
+          document.location.reload();
+                
+          }
+
+          else{
+            $("#info-error").html($("<div class='alert alert-danger' role='alert'>Please try again!</div></p>")).fadeIn(2000).fadeOut(6000);
+                $('#edit-profile')[0].reset();
+          }
+             
+
+        },
+        error: function(data) {
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "add-interest-form"){
+
+    
+    $.ajax({
+        type: "POST",
+        url: "/add/interest/",
+        dataType: "json",
+        data: formData,
+        
+        success: function (json) {
+            
+            
+         var $response = json.response
+            if ($response){
+            
+          $('#interest-ajax').append("<button id='interest_"+json.id+"' class='btn btn-success' type='button' >"+json.interest+"<form id='delete_interest' method='POST' action='/delete_interest/'>{% csrf_token %}<input style='background-color:#5cb85c;color:white;'type='submit' class='stud_course btn btn-primary btn-xs' value='X'><input type='hidden' value='"+json.id+"' name='interest_id'></form></button>");
+
+          $('add-interest').hide()
+          $('#add-interest-form')[0].reset()
+          }
+
+          else{
+            $("#interest-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields! Or keep interest under 100 characters.</div></p>")).fadeIn(2000).fadeOut(6000);
+                $('#add-interest-form')[0].reset();
+          }    
+                
+            
+             
+
+        },
+        error: function(data) {
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete_interest"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_interest/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+                console.log(json.id)
+                id = json.id
+                $("#interest_" + id).hide();
+                
+            
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete_work"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_work/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+                console.log(json.id)
+                id = json.id
+                $("#work_" + id).hide();
+                $("#edit-work-link").hide();
+
+                
+            
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+
+    if ($form.attr("id") == "bio"){
+
+    
+    $.ajax({
+        type: "POST",
+        url: "/edit/bio/",
+        dataType: "json",
+        data: formData,
+        
+        success: function (json) {
+            
+            var $response = json.response
+            if ($response){
+            
+            $("#bio-input").html(""+json.text+"");
+            $("#bio-text").hide();
+            $("#edit-bio").hide();
+
+            }
+            else{
+              $("#bio-error").html($("<div class='alert alert-danger' role='alert'>Please</div></p>")).fadeIn(2000).fadeOut(6000);
+                $('#add-interest-form')[0].reset();
+            } 
+                
+            
+             
+
+        },
+        error: function(data) {
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "work-form"){
+
+    
+    $.ajax({
+        type: "POST",
+        url: "/edit/work/",
+        dataType: "json",
+        data: formData,
+        
+        success: function (json) {
+          var $response = json.response
+          if ($response){  
+         
+            
+          document.location.reload();
+                
+          }
+
+          else{
+            $("#work-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div></p>")).fadeIn(2000).fadeOut(6000);
+                $('#work-form')[0].reset();
+          }
+             
+
+        },
+        error: function(data) {
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "add-work-form"){
+
+    
+    $.ajax({
+        type: "POST",
+        url: "/add/work/",
+        dataType: "json",
+        data: formData,
+        
+        success: function (json) {
+            
+          var $response = json.response
+            if ($response){
+         
+          
+          $('#work-input').append("<div class='media'> <div id='work_"+json.id+"'><div class='media-body'>"+json.company+" - <b>"+json.position+" </b><br>"+json.location+" - "+json.start_date+" - "+json.end_date+"</div>{% if request.user == single_user %}<div class='media-right'><form id='delete_work' method='POST' action='/delete_work/'>{% csrf_token %}<input type='submit' class='stud_course btn btn-primary btn-xs' value='X'><input type='hidden' value='"+json.id+"' name='work_id'></form></div>{% endif %}<hr></div></div><br>");
+          $('#add-work').hide();
+          $('#edit-work-link').show();
+          $('#add-work-form')[0].reset()
+
+        }
+
+        else{
+
+           $("#work-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div></p>")).fadeIn(2000).fadeOut(6000);
+                $('#add-work-form')[0].reset();
+
+        }
+
+                
+                
+            
+             
+
+        },
+        error: function(data) {
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "image-post"){
+    var formData = new FormData(this);
+    $.ajax({
+        type:'POST',
+        url: "/profile/{{ single_user.id }}/image/",
+        data:formData,
+        cache:false,
+        contentType: false,
+        processData: false,
+        
+        success: function (json) {
+            console.log(json.image_post)
+            var $response = json.response;
+                if ($response){
+                if (json.image == 'None'){
+            var str = '{% static "img/default-prof.png" %}'}
+            if (json.image == 'Yes'){
+              var str = json.image_url
+            }
+            if (json.request_image == 'None'){
+            var req_str = '{% static "img/default-prof.png" %}'}
+            if (json.request_image == 'Yes'){
+              var req_str = json.request_image_url
+            }
+                $("#this_post").prepend($("<div class='panel panel-default'><div class='panel-body'><div class='media'><div class='media-left'><img src='"+str+"' class='media-object' width='40' height='40'/></div><div class='media-body'><a href='/members/"+json.user+"/'> <b>"+json.first_name+" "+json.last_name+"</b></a><br><small>"+json.created+"</small></div><br><img style='padding-bottom:20px;' class='col-lg-12 col-md-12 col-sm-12 col-xs-12' src='"+json.image_post+"' height='315' /><br>"+json.text+"</div></div><div class='panel-footer'><div id='reply_ajax_"+json.id+"'></div><form style='padding-top:10px;'method='POST' action='/home/' name='example' id='ajax_"+json.id+"' class='reply_form' enctype='multipart/form-data'> {% csrf_token %}<input type='hidden' name='parent_id' value='"+json.id+"'><div class='input-group'><img style='float:left' src='"+req_str+"' width='35' height='35'/><div style='overflow: hidden; padding-left: .5em;'><input name='mypost' type='text' class='form-control' placeholder='Reply to comment'></div><span class='input-group-btn'><button class='btn btn-primary' type='submit'>Post</button></span></form></div></div></div>").fadeIn(500));
+                $('.image-post')[0].reset()
+                console.log(json.text)
+            }
+            else{
+              $("#post-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div>")).fadeIn(3000).fadeOut(4000);
+                $('#image-post')[0].reset();
+            }
+             
+
+        },
+        error: function(data) {
+            $("#this_post").html("Something went wrong!");
+        }
+    });
+    }
+
+
+    if ($form.attr("id") == "link-post"){
+
+    $.ajax({
+        type: "POST",
+        url: "/profile/{{ single_user.id }}/link/",
+        dataType: "json",
+        data: formData,
+        
+        success: function (json) {
+            var id = json.id
+            console.log(id)
+            
+            console.log(json.link)
+            var $response = json.response
+            if ($response){
+                if (json.image == 'None'){
+            var str = '{% static "img/default-prof.png" %}'}
+            if (json.image == 'Yes'){
+              var str = json.image_url
+            }
+            if (json.request_image == 'None'){
+            var req_str = '{% static "img/default-prof.png" %}'}
+            if (json.request_image == 'Yes'){
+              var req_str = json.request_image_url
+            }
+                $("#this_post").prepend($("<div class='panel panel-default'><div class='panel-body'><div class='media'><div class='media-left'><img src='"+str+"' class='media-object' width='40' height='40'/></div><div class='media-body'><a href='/members/"+json.user+"/'> <b>"+json.first_name+" "+json.last_name+"</b></a><br><small>"+json.created+"</small></div><br><iframe style='padding-bottom:20px;'class='col-lg-12 col-md-12 col-sm-12 col-xs-12'  height='315' src='"+json.link+"' frameborder='0' allowfullscreen></iframe><br>"+json.text+"</div></div><div class='panel-footer'><div id='reply_ajax_"+json.id+"'></div><form style='padding-top:10px;'method='POST' action='/home/' name='example' id='ajax_"+json.id+"' class='reply_form' enctype='multipart/form-data'> {% csrf_token %}<input type='hidden' name='parent_id' value='"+json.id+"'><div class='input-group'><img style='float:left' src='"+req_str+"' width='35' height='35'/><div style='overflow: hidden; padding-left: .5em;'><input name='mypost' type='text' class='form-control' placeholder='Reply to comment'></div><span class='input-group-btn'><button class='btn btn-primary' type='submit'>Post</button></span></form></div></div></div>").fadeIn(500));
+                $('.link-post')[0].reset()
+                console.log(json.text)
+                console.log(json.input_link)
+            }
+            else {
+                 $("#post-error").html($("<div class='alert alert-danger' role='alert'>Must be a YouTube url. Please fill in all fields!</div></div>")).fadeIn(3000).fadeOut(4000);
+                $('#link-post')[0].reset();
+            }
+
+        },
+        error: function(data) {
+            $("#this_post").html("Something went wrong!");
+            console.log(data.text);
+        }
+    });
+    }
+    
+    
+
+    if ($(this).attr("id") == "post-form"){
+
+    $.ajax({
+        type: "POST",
+        url: "/profile/{{ single_user.id }}/",
+        dataType: "json",
+        data: formData,
+        
+        success: function (json) {
+            var $response = json.response
+            if ($response){
+                  if (json.image == 'None'){
+            var str = '{% static "img/default-prof.png" %}'}
+            if (json.image == 'Yes'){
+              var str = json.image_url
+            }
+            if (json.request_image == 'None'){
+            var req_str = '{% static "img/default-prof.png" %}'}
+            if (json.request_image == 'Yes'){
+              var req_str = json.request_image_url
+            }
+            $("#this_post").prepend($("<div class='panel panel-default'><div class='panel-body'><div class='media'><div class='media-left'><img src='"+str+"' class='media-object' width='40' height='40'/></div><div class='media-body'><a href='/profile/{{ single_user.id }}/'> <b>"+json.first_name+" "+json.last_name+"</b></a><br><small>"+json.created+"</small></div><br>"+json.text+"</div></div><div class='panel-footer'><div id='reply_ajax_"+json.id+"'></div><form style='padding-top:10px;'method='POST' action='/profile/{{ single_user.id }}/' name='example' id='ajax_"+json.id+"' class='reply_form' enctype='multipart/form-data'> {% csrf_token %}<input type='hidden' name='parent_id' value='"+json.id+"'><div class='input-group'><img style='float:left' src='"+req_str+"' width='35' height='35'/><div style='overflow: hidden; padding-left: .5em;'><input name='mypost' type='text' class='form-control' placeholder='Reply to comment'></div><span class='input-group-btn'><button class='btn btn-primary' type='submit'>Post</button></span></form></div></div></div>").fadeIn(500));
+            $(".post-form")[0].reset();
+            console.log(json.text)
+          }
+          else{
+            $("#post-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div>")).fadeIn(3000).fadeOut(4000);
+                $('#post-form')[0].reset();
+          }
+        },
+        error: function(data) {
+            $("#this_post").html("Something went wrong!");
+        }
+    });
+    }
+
+    if ($(this).attr('id').indexOf('reply_form') > -1 ){
+        
+    $.ajax({
+        type: "POST",
+        url: "/profile/{{ single_user.id }}/",
+        dataType: "json",
+        data: formData,
+        
+        success: function (json) {
+          var $response = json.response
+            if ($response){
+                  if (json.image == 'None'){
+            var str = '{% static "img/default-prof.png" %}'}
+            if (json.image == 'Yes'){
+              var str = json.image_url
+            }
+            if (json.request_image == 'None'){
+            var req_str = '{% static "img/default-prof.png" %}'}
+            if (json.request_image == 'Yes'){
+              var req_str = json.request_image_url
+            }
+            var id = json.parent_id
+            console.log(id)
+           $('#reply_post_' + id).prepend($("<div class='media'><div class='media-left'><img src='"+str+"' class='media-object' width='40' height='40' /></div><div class='media-body'> <small><b>"+json.first_name+" "+json.last_name+"</b></small> <small> "+json.text+" </small><br><small>"+json.created+"</small></div></div> ").fadeIn(500));
+            $('.reply_form_'+id)[0].reset()
+            console.log(json.text)
+          }
+          else{
+            $("#post-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div>")).fadeIn(3000).fadeOut(4000);
+          }
+        },
+        error: function(data) {
+            $("#this_post").html("Something went wrong!");
+        }
+    });
+    
+    }
+
+    if ($(this).attr('id').indexOf('ajax') > -1 ){
+        
+    $.ajax({
+        type: "POST",
+        url: "/profile/{{ single_user.id }}/",
+        dataType: "json",
+        data: formData,
+        
+        success: function (json) {
+          var $response = json.response
+            if ($response){
+                  if (json.image == 'None'){
+            var str = '{% static "img/default-prof.png" %}'}
+            if (json.image == 'Yes'){
+              var str = json.image_url
+            }
+            if (json.request_image == 'None'){
+            var req_str = '{% static "img/default-prof.png" %}'}
+            if (json.request_image == 'Yes'){
+              var req_str = json.request_image_url
+            }
+            var id = json.parent_id;
+            console.log(id);
+           $('#reply_ajax_'+ id).prepend($("<div class='media'><div class='media-left'> <img src='"+str+"' class='media-object' width='40' height='40' /></div><div class='media-body'> <small><b>"+json.first_name+" "+json.last_name+"</b></small> <small>"+json.text+"</small><br><small>"+json.created+"</small></div> </div>").fadeIn(500));
+            $('.reply_form')[0].reset()
+            console.log(json.text);
+          }
+          else{
+            $("#post-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div>")).fadeIn(3000).fadeOut(4000);
+          }
+        },
+        error: function(data) {
+            $("#this_post").html("Something went wrong!");
+        }
+    });
+    
+    }
+
+
+  
+
+    if ($form.attr("id") == "add_club"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/add_club/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+          var $response = json.response
+            if ($response){  
+            
+                $('#myModalClub').modal('hide');
+                $("#add_club_success").html($("<div class='alert alert-success' role='alert'>Successfully added new club!</div>")).fadeIn(2000).fadeOut(6000);
+                $('#add_club')[0].reset();
+            
+             }
+            else{
+              $("#add_club_error").html($("<div class='alert alert-danger' role='alert'>Logo is optional. Please fill out the rest of the fields.</div></p>")).fadeIn(2000).fadeOut(6000);
+                $('#add_club')[0].reset();
+            }
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+
+    
+
+    if ($form.attr("id") == "delete_team"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_team/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                id = json.id
+                $("#team_" + id).hide();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete_club"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_club/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                id = json.id
+                $("#club_" + id).hide();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete_frat"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_frat/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                id = json.id
+                $("#frat_" + id).hide();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete_course"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_course/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                id = json.id
+                $("#course_" + id).hide();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                id = json.id
+                $("#assign_" + id).hide();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    }); 
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+var csrftoken = getCookie('csrftoken');
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+
+}
+
+function sameOrigin(url) {
+    // test that a given url is a same-origin URL
+    // url could be relative or scheme relative or absolute
+    var host = document.location.host; // host + port
+    var protocol = document.location.protocol;
+    var sr_origin = '//' + host;
+    var origin = protocol + sr_origin;
+    // Allow absolute or scheme relative URLs to same origin
+    return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+        // or any other URL that isn't scheme relative or absolute i.e relative.
+        !(/^(\/\/|http:|https:).*/.test(url));
+}
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
+
+
+</script>
+{% endblock %}

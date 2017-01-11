@@ -1,0 +1,66 @@
+{% extends 'reg_base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<style>
+    .col-lg-4{
+        padding-top:100px;
+        opacity:0.90;
+    }
+
+   body {
+    background: url('{% static "img/school3.jpg" %}') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    font-family: 'Raleway',sans-serif;
+    
+    }
+
+    .navbar{
+  background:transparent;
+  border-bottom:none;
+  color:black;
+  } 
+
+
+  
+@media (max-width: 767px) {
+  
+.navbar {
+  background-color:black;
+}
+
+}
+</style>
+<div style='text-align:center;' class='col-lg-4 col-lg-offset-4'>
+<div class='panel panel-default'>
+        <div class='panel-body'>
+    
+
+
+<h1 style='color:black;'>Let's start setting up your academic profile.</h1>
+
+
+
+<form method='POST' action='/info/' enctype="multipart/form-data"> {% csrf_token %}
+        
+        
+         {{ formset_info.management_form }}
+         {% for form in formset_info %}
+      
+        
+        {% crispy form form.helper %}
+        {% endfor %}
+        
+        
+        
+     
+</form>
+</div><!--panel-body-->
+</div><!--panel-default-->
+</div><!--col-lg-4-->
+
+{% endblock %}

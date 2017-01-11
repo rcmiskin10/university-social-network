@@ -1,0 +1,26 @@
+{% load staticfiles %}	
+
+
+ {% for item in f %}
+
+
+                
+<div id='assign_{{ item.0 }}' class="panel panel-default">
+          
+        <div id ='list'class="panel-body">
+
+          <div style='display:flex;'class="row">
+            <div style='color:white;background-color:red;'class='col-lg-4'>
+            <h5>{{ item.1|date:"M d, Y" }}</h5>
+          </div>
+            <div style='background-color:#E0E0E0;' class='col-lg-8'>
+            
+           {{ item.2 }} <br> {{ item.3 }}
+           
+          </div>
+          </div>
+        
+    </div>
+
+</div>
+{% endfor %}

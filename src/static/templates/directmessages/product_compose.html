@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<style>
+.sched{
+  background-color:#E0E0E0;
+  border: none;
+  color:black;
+
+}
+.schedule {
+  display:none;
+    }
+#main{
+	padding-top:75px;
+}
+#list{
+  padding-top:0px;
+  padding-bottom:0px;
+  background-color:#E0E0E0;
+}
+</style>
+
+<div class="container" id="main">
+   <div class="row">
+
+   <div class="col-md-3 col-sm-5">
+        <div class="panel panel-default">
+          
+   			<div style='text-align:center;'class="panel-body">
+            
+	      	<ul class="nav nav-pills nav-stacked">
+                            <li class="active"><a href="/messages/inbox/"> Inbox  <span class="label label-theme pull-right inbox-notification">{{ request.session.num_of_messages }}</span></a></li>
+                            <li><a href="/messages/sent/">  Sent </a></li>
+                            
+                        </ul>
+   				
+              
+            </div>
+   		</div>
+        
+     
+   
+
+	</div>
+
+
+	<div class="col-md-6 col-sm-8">
+      	 
+		<div class="panel panel-default">
+			<div class="panel-body">
+        <div id='message-error'></div>
+				<h4>To: <a href='/profile/{{ user.id }}/'>{{ product.owner.first_name }} {{ product.owner.last_name }}</a></h4>
+<form id='product-message' action='' method='POST'> {% csrf_token %}
+{% crispy form form.helper %}
+
+</form>
+
+			</div>
+		</div>
+
+	</div>
+
+
+
+	
+
+
+</div> <!--row-->
+
+</div><!--main-->
+
+<script>
+
+
+
+</script>
+{% endblock %}

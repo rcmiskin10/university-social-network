@@ -1,0 +1,1687 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+<script>
+{% block jquery %}
+$('.edit_schedule').click(function(e){
+  
+  e.preventDefault();
+  
+  $(this).next('.schedule').fadeToggle();
+  //$('.reply_comment').fadeToggle();
+})
+
+$('.course-link').click(function(e){
+  e.preventDefault();
+  $(".club").hide();
+  $(".team").hide();
+  $(".frat").hide();
+  $('.course').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+
+$('.club-link').click(function(e){
+  e.preventDefault();
+  $(".course").hide();
+  $(".team").hide();
+  $(".frat").hide();
+  $('.club').fadeToggle();
+
+  //$(this).next('.about-me').fadeToggle();
+
+})
+
+$('.team-link').click(function(e){
+  e.preventDefault();
+  $(".course").hide();
+  $(".club").hide();
+  $(".frat").hide();
+  $('.team').fadeToggle();
+  
+  //$(this).next('.about-me').fadeToggle();
+
+})
+
+$('.frat-link').click(function(e){
+  e.preventDefault();
+  $(".course").hide();
+  $(".club").hide();
+  $(".team").hide();
+  
+  $('.frat').fadeToggle();
+  
+  //$(this).next('.about-me').fadeToggle();
+
+})
+
+$('.all').click(function(e){
+  e.preventDefault();
+  var id = $(this).attr('id');
+  $("#limit-child-comments_" + id).hide();
+  $(this).hide();
+  
+  $('#child-comments_' + id).fadeToggle();
+  
+  //$(this).next('.about-me').fadeToggle();
+
+})
+
+{% endblock %}
+</script>
+{% block content %}
+<style>
+#main{
+	padding-top:75px;
+}
+.sched{
+  background-color:#E0E0E0;
+  border: none;
+  color:black;
+
+}
+.schedule {
+  display:none;
+    }
+.panel{
+	border-radius: 0px;
+}
+.club{
+	display:none;
+}
+.team{
+  display:none;
+}
+.frat{
+  display:none;
+}
+.child-comments{
+  display:none;
+}
+#list{
+  padding-top:0px;
+  padding-bottom:0px;
+  background-color:#E0E0E0;
+}
+.assg{
+  background-color:#E0E0E0;
+  border: none;
+  color:black;
+
+}
+.stud_course{
+  background-color:white;
+  border: none;
+  color:black;
+
+}
+.black{
+  background-color:black;
+  color:white;
+
+}
+
+.link-form {
+        display:none;
+   }
+.image-form {
+        display:none;
+   }
+</style>
+<!--main-->
+<div class="container" id="main">
+   <div class="row">
+
+   <div class="col-md-3 col-sm-5">
+        <div class="panel panel-default">
+          
+   			<div class="panel-body">
+          <div id='add_frat_success'></div>
+          <div id='add_team_success'></div>
+          <div id='add_club_success'></div>
+              <h4>Profile<h4>
+                <div class="media">
+              {% for item in request.user.userpicture_set.all %}
+                    
+                    {% if item.image %}
+                        
+                            <div class="media-left">
+                            <img src='{{ item.image.url }}' width="50" height="50" />
+                       
+                        </div>
+                    {% endif %}
+
+                
+            {% endfor %}
+            
+            {% if not request.user.userpicture_set.all %}
+            <div class="media-left">
+                    <img src='{% static "img/default-prof.png" %}' width="50" height="50" />
+                    </div>
+            {% endif %}
+                  
+                    <div class="media-body">
+                        <br>
+                        <a href='/profile/{{ request.user.id }}/'>
+                        <b>{{ request.user.first_name }} {{ request.user.last_name }}</b>
+                        </a>
+                      
+                    </div>
+                    
+                    <br>
+                    <ul class="nav nav-pills nav-stacked">
+                            <li class="active"><a href="/messages/inbox/"> Messages  <span class="label label-theme pull-right inbox-notification">{{ request.session.num_of_messages }}</span></a></li>
+                            
+                            
+                        </ul>
+                    </div>
+            </div>
+   		</div>
+        
+     
+        <div class="panel panel-default">
+           
+   			<div id='create-tour' class="panel-body">
+             
+
+              
+           	<h4>Create</h4>
+            <div class="modal fade" id="myModalClub" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Add Club</h4>
+                  </div>
+                  <div class="modal-body">
+                    <form id='add_club' method='POST' action='/add_club/' enctype='multipart/form-data'> {% csrf_token %}
+                    <div style='color:red' id='add_club_error'>
+                    </div>
+                    
+                    <b>Add a logo:</b> 
+                {% crispy add_club_form  %}
+                
+            </form>
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+
+            <div class="modal fade" id="myModalTeam" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Add Team</h4>
+                  </div>
+                  <div class="modal-body">
+                    <form id='add_team' method='POST' action='/add_team/' enctype='multipart/form-data'> {% csrf_token %}
+                    <div style='color:red' id='add_team_error'>
+                    </div>
+                    
+                    <b>Add a logo:</b> 
+                {% crispy add_team_form %}
+                
+            </form>
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+
+            <div class="modal fade" id="myModalFrat" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Add Fraternity/Sorority</h4>
+                  </div>
+                  <div class="modal-body">
+                    <form id='add_frat' method='POST' action='/add_frat/' enctype='multipart/form-data'> {% csrf_token %}
+                    <div style='color:red' id='add_frat_error'>
+                    </div>
+                    
+                    <b>Add a logo:</b> 
+                {% crispy add_frat_form %}
+                
+            </form>
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+         
+            <a href='#' data-toggle="modal" data-target="#myModalClub">Club</a><br>
+            <a href='#' data-toggle="modal" data-target="#myModalTeam">Team</a><br>
+            <a href='#' data-toggle="modal" data-target="#myModalFrat">Fraternity/Sorority</a><br>
+              
+          
+
+            
+              
+            </div>
+         </div> 
+
+        <div class="panel panel-default">
+           
+        <div class="panel-body">
+
+          <h4>Classes</h4>
+          {% for item in studentcourses %}
+           <div class="media">
+            <div id='course_{{ item.id }}'>
+            <div class="media-body">
+              <a href="/courses/{{ item.course_id.slug }}"><small>{{ item.course_id.course_name }} - {{ item.course_id.course_num }}</small></a>
+              
+            </div><!--media-body-->
+            <div class='media-right'>
+              <form id='delete_course' method='POST' action='/delete_course/'>{% csrf_token %}
+                          <input type='submit' class='stud_course btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.id }}' name='course_id'>
+              </form>
+            </div>
+          </div><!--div course-->
+           </div><!--media-->
+          {% endfor %}
+        </div>
+
+
+        </div>
+        
+        {% if my_clubs %}
+         <div class="panel panel-default">
+           
+        <div class="panel-body">
+
+          <h4>Clubs</h4>
+          {% for item in my_clubs %}
+          <div class='media'>
+            <div id='club_{{ item.id }}'>
+          <div class='media-body'>
+              <a href="/clubs/{{ item.club_id.id }}"><small>{{ item.club_id.club_name }} </small></a>
+          </div><!--media-body-->
+          <div class='media-right'>
+              <form id='delete_club' method='POST' action='/delete_club/'>{% csrf_token %}
+                          <input type='submit' class='stud_course btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.id }}' name='club_id'>
+              </form>
+            </div><!--div media-right-->
+          </div><!--div club-->
+          </div><!--media-->
+          {% endfor %}
+        </div>
+
+        
+        </div>
+        {% endif %}
+
+        {% if my_teams %}
+         <div class="panel panel-default">
+           
+        <div class="panel-body">
+
+          <h4>Teams</h4>
+          {% for item in my_teams %}
+          <div class='media'>
+            <div id='team_{{ item.id }}'>
+          <div class='media-body'>
+              <a href="/teams/{{ item.team_id.id }}/"><small>{{ item.team_id.name }} </small></a>
+          </div><!--media-body-->
+          <div class='media-right'>
+              <form id='delete_team' method='POST' action='/delete_team/'>{% csrf_token %}
+                          <input type='submit' class='stud_course btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.id }}' name='team_id'>
+              </form>
+            </div><!--div media-right-->
+          </div><!--div club-->
+          </div><!--media-->
+          {% endfor %}
+        </div>
+
+        
+        </div>
+        {% endif %}
+
+        {% if my_frats %}
+         <div class="panel panel-default">
+           
+        <div class="panel-body">
+
+          <h4>Frats</h4>
+          {% for item in my_frats %}
+          <div class='media'>
+            <div id='frat_{{ item.id }}'>
+          <div class='media-body'>
+              <a href="/frats/{{ item.frat_id.id }}/"><small>{{ item.frat_id.name }} </small></a>
+          </div><!--media-body-->
+          <div class='media-right'>
+              <form id='delete_frat' method='POST' action='/delete_frat/'>{% csrf_token %}
+                          <input type='submit' class='stud_course btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.id }}' name='frat_id'>
+              </form>
+            </div><!--div media-right-->
+          </div><!--div club-->
+          </div><!--media-->
+          {% endfor %}
+        </div>
+
+        
+        </div>
+        {% endif %}
+	</div>
+
+  	<div class="col-md-6 col-sm-8">
+      	 
+            <div class="panel panel-default">
+<div id='whats-happening' style='text-align:center;'class="panel-body">
+<h4>What's Happening on Campus?</h4>
+<a href='#' class='post'><img id='post' src="{% static 'img/text.png' %}" width="30" height="30"></a>
+<a href='#' class='tube'><img id='tube' src="{% static 'img/youtube-icon.png' %}" width="30" height="30"></a>
+<a href='#' class='pic'><img id='pic' src="{% static 'img/image.png' %}" width="25" height="25"></a>
+<a href='#' data-toggle="modal" id='modal-event' data-target="#myModalEvent"><button class='black btn btn-sm'>Create Event</button></a><br>
+
+<div class="modal fade" id="myModalEvent" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Add Event</h4>
+                  </div>
+                  <div class="modal-body">
+                    <form id='add-event' method='POST' action='/home/main_event/' enctype='multipart/form-data'> {% csrf_token %}
+                    <div style='color:red' id='event-error'>
+                    </div>
+                    
+                   
+                {% crispy event_form event_form.helper %}
+                
+            </form>
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+
+</div>
+<div class="panel-body">
+  <div id='post-error'></div>
+<div class='main-form'>
+<form method='POST' action='/home/' name='test' id='post-form' class='post-form' enctype='multipart/form-data'>{% csrf_token %}
+        <div class='input-group'>
+       
+            <input name='mypost' type='text' class='main form-control' placeholder='Have something to say?'>
+            
+            <span class='input-group-btn'>display: flex;
+            
+                
+                <button class=' btn btn-primary' type='submit'>Post</button>
+            </span>
+            
+        </div>
+        
+       
+</form>
+</div>
+<div class='link-form'>
+
+    <form id='link-post' class='link-post' method='POST' action='/link/club/{{ club.id }}/' enctype='multipart/form-data'> {% csrf_token %}
+                
+                {% crispy link_mypost_form link_mypost_form.helper %}
+
+    </form>
+
+</div>
+
+<div class='image-form'>
+
+    <form id='image-post' class='image-post' method='POST' action='/image/club/{{ club.id }}/' enctype='multipart/form-data'> {% csrf_token %}
+                
+                {% crispy image_mypost_form image_mypost_form.helper %}
+
+    </form>
+
+</div>
+
+
+
+</div><!--panel-footer-->
+</div> <!--default panel-->
+
+<table class='table'>
+   
+   <div id='this_post'>
+    
+    </div> 
+    
+{% for post in posts %}
+    
+  <div id='post_{{ post.id }}' >
+   
+    <div class="panel panel-default">
+            <div class='panel-body'> 
+                <div class="media">
+
+                {% for item in post.user.userpicture_set.all %}
+                    
+                    {% if item.image %}
+                        
+                            <div class="media-left">
+                            <img src='{{ item.image.url }}' width="40" height="40" />
+                        </div>
+                        
+                    {% endif %}
+                {% endfor %}
+                    {% if not post.user.userpicture_set.all %}
+           <div class="media-left">
+                    <img style='float:left' src='{% static "img/default-prof.png" %}' width="40" height="40" />
+                    </div>
+            {% endif %}
+                
+            
+
+                    <div class="media-body">
+                    
+                        <a href='/profile/{{ post.user.id }}/'>
+                        <b>{{ post.user.first_name }} {{ post.user.last_name }}</b>
+                        </a>
+                        <br>
+                        <small>{{ post.timestamp }}</small>
+                    </div>
+
+                    
+                    {% if post.event %}
+                    <div class='media-right'>
+                      
+                      {% if post.event == 'Party' %}
+                       <img src='{% static "img/party.png" %}' width="50" height="50" />
+                       {% endif %}
+                       {% if post.event == 'Game' %}
+                       <img src='{% static "img/sports.png" %}' width="50" height="50" />
+                       {% endif %}
+                       {% if post.event == 'General Event' %}
+                       <img src='{% static "img/event.png" %}' width="40" height="50" />
+                       {% endif %}
+                    </div>
+                    {% endif %}
+                    {% if post.user == request.user %}
+                    <div class='media-right'>
+                    <form id='delete_post' method='POST' action='/delete_post/'>{% csrf_token %}
+                          <input type='submit' class='stud_course btn btn-primary btn-xs' value='Delete Post'>
+                         <input type='hidden' value='{{ post.id }}' name='post_id'>
+                    </form><br>
+                  </div><!--media-right-->
+                  {% endif %}
+
+                    </div>
+                    
+                    {% if post.links %}
+                    <br>
+                    <iframe style='padding-bottom:20px;'class="col-lg-12 col-md-12 col-sm-12 col-xs-12"  height="315" src="{{ post.links }}" frameborder="0" allowfullscreen></iframe>
+                
+                    {% endif %}
+
+                    {% if post.image %}
+                    <br>
+                    <img style='padding-bottom:20px;' class="col-lg-12 col-md-12 col-sm-12 col-xs-12" src='{{ post.image.url }}' height="315" />
+                
+                    {% endif %}
+            {% if post.event %}
+            <h4>{{ post.event }} - <small style='color:black;'>{{ post.date }} @ {{ post.start_time }} - {{ post.end_time }}</small></h4> 
+            {% endif %}   
+        <br>{{ post.get_mypost|linebreaksbr }} 
+
+            </div><!-- panel-body-->
+            
+            <div class="panel-footer">
+            
+            {% if not post.is_child %}
+        
+            
+                <div id='reply_post_{{ post.id }}'>
+                
+                </div>
+                <div id='limit-child-comments_{{ post.id }}'>
+                {% for child in post.get_children|slice:":4" %}
+                  <div class="media">
+                    {% for item in child.user.userpicture_set.all %}
+                    {% if item.image %}<div class="media-left"> <img src='{{ item.image.url }}' class='media-object' width="40" height="40" /> </div>{% endif %}{% endfor %}{% if not child.user.userpicture_set.all %}<div class="media-left"><img class='media-object' src='{% static "img/default-prof.png" %} ' width="40" height="40" /> </div>{% endif %} <div class="media-body"> <small><b><a href='/profile/{{ child.user.id }}/'>{{ child.user.first_name }} {{ child.user.last_name}}</a></b></small> <small>{{ child.get_mypost|linebreaksbr }}</small><br><small>{{child.timestamp}}</small></div>
+                  </div>
+                {% endfor %}
+              </div><!--child-comments-->
+              <div id='child-comments_{{ post.id }}' class='child-comments'>
+                  {% for child in post.get_children %}
+
+                    <div class="media">
+                    {% for item in child.user.userpicture_set.all %}
+                    {% if item.image %}<div class="media-left"> <img src='{{ item.image.url }}' class='media-object' width="40" height="40" /> </div>{% endif %}{% endfor %}{% if not child.user.userpicture_set.all %}<div class="media-left"><img class='media-object' src='{% static "img/default-prof.png" %} ' width="40" height="40" /> </div>{% endif %} <div class="media-body"> <small><b><a href='/profile/{{ child.user.id }}/'>{{ child.user.first_name }} {{ child.user.last_name}}</a></b></small> <small>{{ child.get_mypost|linebreaksbr }}</small><br><small>{{child.timestamp}}</small></div>
+                  </div>
+
+                {% endfor %}
+
+                </div>
+                <br>
+                {% if post.get_children.count > 4 %}
+                <a href='#' class='all' id='{{ post.id }}'>See all</a>
+                {% endif %}
+                
+          
+                
+          
+            {% endif %}
+        
+                <form style='padding-top:10px;' method='POST' action='/home/' name='test' id='reply_form_{{ post.id }}' class='reply_form_{{ post.id }}' enctype='multipart/form-data'> {% csrf_token %}
+                    <input type='hidden' name='parent_id' value='{{ post.id }}'>
+                    <div class='input-group'>
+                            {% for item in request.user.userpicture_set.all %}
+                            {% if item.image %}
+                                <img style='float:left' src='{{ item.image.url }}' width='35' height='35'/>
+                                {% endif %}
+                                {% endfor %}
+                                {% if not request.user.userpicture_set.all %}
+           
+                    <img style='float:left' src='{% static "img/default-prof.png" %}' width="35" height="35" />
+                    
+            {% endif %}
+
+                            
+                            
+                            <div style='overflow: hidden; padding-left: .5em;'>
+                                <input name='mypost' type='text' class='form-control' placeholder='Reply to comment'>
+                            </div>
+                        <span class='input-group-btn'><button class='btn btn-primary' type='submit'>Post</button></span>
+                    </div><!--div input-group-->
+                </form>
+                
+            </div><!--div panel-footer-->
+        </div><!--div panel-panel-default-->
+        
+    
+          
+       
+        
+        
+        
+        
+    <br>
+  </div>
+{% endfor %}
+ 
+
+</table>
+      
+      	
+      
+  	</div><!--div col -->
+
+
+  	<div class="col-md-3 col-sm-5">
+         <div class="panel panel-default">
+           
+   			<div id='schedule-tour' class="panel-body">
+              <h4  style="text-align:center;">Schedule</h4>
+              <div id='sched-error'></div>
+<hr>
+<a href='#' class='edit_schedule'>Add to Schedule</a>
+              <div class='schedule' style='text-align:center;'>
+              <form id='schedule' method='POST' action='/main_schedule/' enctype='multipart/form-data'> {% csrf_token %}
+              
+                
+              {{ schedule_form.duedate }}<br>
+              {{ schedule_form.text }}<br>
+              {{ schedule_form.management_form }}
+              
+              
+              
+              <input class='btn btn-success' type='submit' value='Add'/>
+              </form>
+            
+
+          </div><br><br>
+<div id='item'>
+
+                  {% for item in f %}
+
+
+                
+<div id='assign_{{ item.0 }}' class="panel panel-default">
+          
+        <div id ='list'class="panel-body">
+
+          <div style='display:flex;'class="row">
+            <div style='color:white;background-color:red;'class='col-lg-4'>
+            <h5>{{ item.1|date:"M d, Y" }}</h5>
+          </div>
+            <div style='background-color:#E0E0E0;' class='col-lg-8'>
+            
+           {{ item.2 }} <br> {{ item.3 }}
+           {% if item.4 == 'main' %}
+           <form id='delete-main-schedule' method='POST' action='/delete_main_sched/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='sched_id'></form>
+          {% endif %} 
+           {% if item.4 == 'team' %}
+           <form id='delete-team-schedule' method='POST' action='/delete_team_sched/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='sched_id'></form>
+          {% endif %}
+          {% if item.4 == 'frat' %}
+           <form id='delete-frat-schedule' method='POST' action='/delete_frat_sched/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='sched_id'></form>
+          {% endif %}
+          {% if item.4 == 'club' %}
+           <form id='delete-club-schedule' method='POST' action='/delete_sched/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='sched_id'></form>
+          {% endif %}
+          {% if item.4 == 'course' %}
+
+           <form id='delete-course-schedule' method='POST' action='/delete_assign/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='assign_id'></form>
+          {% endif %}
+          </div>
+          </div>
+        
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div> <!--item-->  
+
+{% if f %}
+
+          <div style='text-align:center;'class="pagination">
+    <span class="step-links">
+        {% if f.has_previous %}
+            <a id='previous' href="?page={{ f.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ f.number }} of {{ f.paginator.num_pages }}.
+        </span>
+
+        {% if f.has_next %}
+            <a id='next' href="?page={{ f.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>                                                                                           {% endif %}                                                                                                                                                                                                                                                                  
+            </div>
+
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+   		</div>
+        
+  <div class="panel panel-default">
+           
+        <div style='text-align:center;' class="panel-body">
+          <h4>New to Student Grounds?</h4>
+          <h5>Click here to take a short tour of our Home Page features.<h5><br>
+          <a id='tour-link' href='#'><button class='btn btn-primary' type='button'>Tour</button></a>
+        </div><!--panel-body-->
+
+      </div><!--panel-default-->
+ 
+        
+  </div><!--/row-->
+  
+  
+</div><!--/main-->
+<script>
+
+var tour = new Tour({
+  
+  steps: [
+  
+  {
+    
+    title: "Welcome!",
+    content: "Welcome to Student Grounds! Here's a quick little tour.",
+    backdrop: true,
+    orphan: true,
+  },
+  {
+    element: "#create-tour",
+    title: "Create",
+    content: "Click on any organization to create a club, team or fraternity/sorority page to advertise and gain more members!",
+    backdrop: true,
+  },
+
+  {
+    element: "#whats-happening",
+    title: "What's happening on campus?",
+    content: "Anything happening on campus? Share posts, pictures, and videos with students within your own school!",
+    backdrop: true,
+  },
+  {
+    element: "#post",
+    title: "Post regular text.",
+    content: "Click the pen to post regular text to the feed!",
+    placement: 'bottom',
+    backdrop: true,
+  },
+  {
+    element: "#tube",
+    title: "Post a YouTube link!",
+    content: "Click the YouTube logo to post a YouTube video. Just copy and paste the YouTube url link and post it!",
+    placement: 'bottom',
+    backdrop: true,
+  },
+  {
+    element: "#pic",
+    title: "Post an Image.",
+    content: "Click the camera to post an image from your computer or device and post it!",
+    placement: 'bottom',
+    backdrop: true,
+  },
+{
+   element: "#modal-event",
+    title: "Want to create an event?",
+    content: "Is there an event you want to advertise to the students? Create one here!",
+    backdrop: true,
+  },
+{
+   element: "#schedule-tour",
+    title: "Master Schedule",
+    content: "This is your master schedule. The master schedule shows all course assignments you added, and any events or meetings that you added in any of your extracurricular activity pages. A simple way to control and organize your busy lives!",
+    placement: 'left',
+    backdrop: true,
+  },  
+  {
+    element: "#connect-tour",
+    title: "Connect",
+    content: "Connect is where you join your course, club, team, or fraternity/sorority pages to collaborate and engage with members of the same groups!",
+    placement: 'bottom',
+    backdrop: true,
+
+  },
+  {
+    element: "#marketplace-tour",
+    title: "U-Marketplace",
+    content: "The University Marketplace is where you can easily buy and sell products or tutoring services within your own school!",
+    placement: 'bottom',
+    backdrop: true,
+  },
+  {
+    element: "#local-tour",
+    title: "Local",
+    content: "Local is a simple directory where you can find places for entertainment, food, and shops around campus!",
+    placement: 'bottom',
+    backdrop: true,
+  },
+   {
+    
+    title: "Explore!",
+    content: "That was a tutorial for the home page. There are tutorials for each page and feature so look for it on right side of the screen if you are confused ever throughout your experience.  Welcome to SG, enjoy!",
+    backdrop: true,
+    orphan: true,
+  },
+
+
+  
+  
+]});
+
+// Initialize the tour
+tour.init();
+
+// Start the tour
+tour.start();
+tour.restart();
+$('.off').click(function () {
+ tour.end();  
+});
+$(function() {
+    $( ".datepicker" ).datepicker();
+  });
+$('#tour-link').click(function(e){
+
+var tour = new Tour({
+
+  steps: [
+  
+  {
+    
+    title: "Welcome!",
+    content: "Welcome to Student Grounds! Here's a quick little tour.",
+    backdrop: true,
+    orphan: true,
+  },
+  {
+    element: "#create-tour",
+    title: "Create",
+    content: "Click on any organization to create a club, team or fraternity/sorority page to advertise and gain more members!",
+    backdrop: true,
+  },
+
+  {
+    element: "#whats-happening",
+    title: "What's happening on campus?",
+    content: "Anything happening on campus? Share posts, pictures, and videos with students within your own school!",
+    backdrop: true,
+  },
+  {
+    element: "#post",
+    title: "Post regular text.",
+    content: "Click the pen to post regular text to the feed!",
+    placement: 'bottom',
+    backdrop: true,
+  },
+  {
+    element: "#tube",
+    title: "Post a YouTube link!",
+    content: "Click the YouTube logo to post a YouTube video. Just copy and paste the YouTube url link and post it!",
+    placement: 'bottom',
+    backdrop: true,
+  },
+  {
+    element: "#pic",
+    title: "Post an Image.",
+    content: "Click the camera to post an image from your computer or device and post it!",
+    placement: 'bottom',
+    backdrop: true,
+  },
+{
+   element: "#modal-event",
+    title: "Want to create an event?",
+    content: "Is there an event you want to advertise to the students? Create one here!",
+    backdrop: true,
+  },
+{
+   element: "#schedule-tour",
+    title: "Master Schedule",
+    content: "This is your master schedule. The master schedule shows all course assignments you added, and any events or meetings that you added in any of your extracurricular activity pages. A simple way to control and organize your busy lives!",
+    placement: 'left',
+    backdrop: true,
+  },  
+  {
+    element: "#connect-tour",
+    title: "Connect",
+    content: "Connect is where you join your course, club, team, or fraternity/sorority pages to collaborate and engage with members of the same groups!",
+    placement: 'bottom',
+    backdrop: true,
+
+  },
+  {
+    element: "#marketplace-tour",
+    title: "U-Marketplace",
+    content: "The University Marketplace is where you can easily buy and sell products or tutoring services within your own school!",
+    placement: 'bottom',
+    backdrop: true,
+  },
+  {
+    element: "#local-tour",
+    title: "Local",
+    content: "Local is a simple directory where you can find places for entertainment, food, and shops around campus!",
+    placement: 'bottom',
+    backdrop: true,
+  },
+   {
+    
+    title: "Explore!",
+    content: "That was a tutorial for the home page. There are tutorials for each page and feature so look for it on right side of the screen if you are confused ever throughout your experience.  Welcome to SG, enjoy!",
+    backdrop: true,
+    orphan: true,
+  },
+
+
+  
+  
+]});
+
+// Initialize the tour
+tour.init();
+
+// Start the tour
+tour.start();
+tour.restart();
+});
+
+$('.tube').click(function(e){
+  
+  e.preventDefault();
+  $(".main-form").hide();
+  $(".image-form").hide();
+  $('.link-form').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+  
+})
+
+$('.post').click(function(e){
+  
+  e.preventDefault();
+  $(".link-form").hide();
+  $(".image-form").hide();
+  $('.main-form').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+  
+})
+$('.pic').click(function(e){
+  
+  e.preventDefault();
+  $(".link-form").hide();
+  $(".main-form").hide();
+  $('.image-form').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+  
+})
+
+$(function() {
+  $("#search").autocomplete({
+    source: "/api/search/",
+    minLength: 2,
+    select: function( event , ui ) {
+            document.location.href = ui.item.url ;
+        }
+  });
+});
+
+$('form').live('submit', function(event) {
+
+    event.preventDefault();
+    
+    var $form = $(this);
+    var id = $form.attr('id');
+    var formData = $form.serialize();
+
+    if ($form.attr("id") == "delete-main-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_main_sched/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                document.location.reload();
+                
+            
+             
+
+        },
+        error: function(data) {
+          
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete-course-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_assign/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                document.location.reload();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+    if ($form.attr("id") == "delete-club-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_sched/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+             
+                document.location.reload();
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete-frat-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_frat_sched/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                document.location.reload();
+                
+            
+             
+
+        },
+        error: function(data) {
+          
+            
+        }
+    });
+    }
+    if ($form.attr("id") == "delete-team-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_team_sched/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                document.location.reload();
+                
+            
+             
+
+        },
+        error: function(data) {
+          
+            
+        }
+    });
+    }
+
+     if ($form.attr("id") == "schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/main_schedule/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            var $response = json.response
+            if ($response){
+                document.location.reload();
+                
+            }
+            else{
+              $("#sched-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div>")).fadeIn(2000).fadeOut(3000);
+                $('#schedule')[0].reset();
+            }
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete_post"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_post/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                id = json.id
+                $("#post_" + id).hide();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "image-post"){
+    var formData = new FormData(this);
+    $.ajax({
+        type:'POST',
+        url: "/home/main_image/",
+        data:formData,
+        cache:false,
+        contentType: false,
+        processData: false,
+        
+        success: function (json) {
+            console.log(json.image_post)
+            var $response = json.response
+            if ($response){
+            if (json.image == 'None'){
+            var str = "{% static 'img/default-prof.png' %}"}
+            if (json.image == 'Yes'){
+              var str = json.image_url
+            }
+            if (json.request_image == 'None'){
+            var req_str = "{% static 'img/default-prof.png' %}"}
+            if (json.request_image == 'Yes'){
+              var req_str = json.request_image_url
+            }
+                $("#this_post").prepend($("<div class='panel panel-default'><div class='panel-body'><div class='media'><div class='media-left'><img src='"+str+"' class='media-object' width='40' height='40'/></div><div class='media-body'><a href='/members/"+json.user+"/'> <b>"+json.first_name+" "+json.last_name+"</b></a><br><small>"+json.created+"</small></div><br><img style='padding-bottom:20px;' class='col-lg-12 col-md-12 col-sm-12 col-xs-12' src='"+json.image_post+"' height='315' /><br>"+json.text+"</div></div><div class='panel-footer'><div id='reply_ajax_"+json.id+"'></div><form style='padding-top:10px;'method='POST' action='/home/' name='example' id='ajax_"+json.id+"' class='reply_form' enctype='multipart/form-data'> {% csrf_token %}<input type='hidden' name='parent_id' value='"+json.id+"'><div class='input-group'><img style='float:left' src='"+req_str+"' width='35' height='35'/><div style='overflow: hidden; padding-left: .5em;'><input name='mypost' type='text' class='form-control' placeholder='Reply to comment'></div><span class='input-group-btn'><button class='btn btn-primary' type='submit'>Post</button></span></form></div></div></div>").fadeIn(500));
+                $('.image-post')[0].reset()
+                console.log(json.text)
+            }
+             else{
+              $("#post-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div>")).fadeIn(3000).fadeOut(4000);
+                $('#image-post')[0].reset();
+            }
+
+        },
+        error: function(data) {
+            $("#this_post").html("Something went wrong!");
+        }
+    });
+    }
+
+
+    if ($form.attr("id") == "link-post"){
+
+    $.ajax({
+        type: "POST",
+        url: "/home/main_link/",
+        dataType: "json",
+        data: formData,
+        
+        success: function (json) {
+            var id = json.id
+            console.log(id)
+            
+            console.log(json.link)
+            var $response = json.response
+            if ($response){
+            if (json.image == 'None'){
+            var str = "{% static 'img/default-prof.png' %}"}
+            if (json.image == 'Yes'){
+              var str = json.image_url
+            }
+            if (json.request_image == 'None'){
+            var req_str = "{% static 'img/default-prof.png' %}"}
+            if (json.request_image == 'Yes'){
+              var req_str = json.request_image_url
+            }
+                $("#this_post").prepend($("<div class='panel panel-default'><div class='panel-body'><div class='media'><div class='media-left'><img src='"+str+"' class='media-object' width='40' height='40'/></div><div class='media-body'><a href='/members/"+json.user+"/'> <b>"+json.first_name+" "+json.last_name+"</b></a><br><small>"+json.created+"</small></div><br><iframe style='padding-bottom:20px;'class='col-lg-12 col-md-12 col-sm-12 col-xs-12'  height='315' src='"+json.link+"' frameborder='0' allowfullscreen></iframe><br>"+json.text+"</div></div><div class='panel-footer'><div id='reply_ajax_"+json.id+"'></div><form style='padding-top:10px;'method='POST' action='/home/' name='example' id='ajax_"+json.id+"' class='reply_form' enctype='multipart/form-data'> {% csrf_token %}<input type='hidden' name='parent_id' value='"+json.id+"'><div class='input-group'><img style='float:left' src='"+req_str+"' width='35' height='35'/><div style='overflow: hidden; padding-left: .5em;'><input name='mypost' type='text' class='form-control' placeholder='Reply to comment'></div><span class='input-group-btn'><button class='btn btn-primary' type='submit'>Post</button></span></form></div></div></div>").fadeIn(500));
+                $('.link-post')[0].reset()
+                console.log(json.text)
+                console.log(json.input_link)
+            }
+            else {
+                $("#post-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div>")).fadeIn(3000).fadeOut(4000);
+                $('#link-post')[0].reset();
+            }
+
+        },
+        error: function(data) {
+            $("#this_post").html("Something went wrong!");
+            console.log(data.text);
+        }
+    });
+    }
+    
+    if ($(this).attr("id") == "add-event"){
+
+    $.ajax({
+        type: "POST",
+        url: "/home/main_event/",
+        dataType: "json",
+        data: formData,
+        
+        success: function (json) {
+          var $response = json.response
+            if ($response){
+            if (json.image == 'None'){
+            var str = "{% static 'img/default-prof.png' %}"}
+            if (json.image == 'Yes'){
+              var str = json.image_url
+            }
+            if (json.request_image == 'None'){
+            var req_str = "{% static 'img/default-prof.png' %}"}
+            if (json.request_image == 'Yes'){
+              var req_str = json.request_image_url
+            }
+            $('#myModalEvent').modal('hide');
+            $("#this_post").prepend($("<div class='panel panel-default'><div class='panel-body'><div class='media'><div class='media-left'><img src='"+str+"' class='media-object' width='40' height='40'/></div><div class='media-body'><a href='/members/"+json.user+"/'> <b>"+json.first_name+" "+json.last_name+"</b></a><br><small>"+json.created+"</small></div><h4>"+json.event+" on "+json.date+" @  "+json.start_time+" until "+json.end_time+"</h4><br>"+json.text+"</div></div><div class='panel-footer'><div id='reply_ajax_"+json.id+"'></div><form style='padding-top:10px;'method='POST' action='/home/' name='example' id='ajax_"+json.id+"' class='reply_form' enctype='multipart/form-data'> {% csrf_token %}<input type='hidden' name='parent_id' value='"+json.id+"'><div class='input-group'><img style='float:left' src='"+req_str+"' width='35' height='35'/><div style='overflow: hidden; padding-left: .5em;'><input name='mypost' type='text' class='form-control' placeholder='Reply to comment'></div><span class='input-group-btn'><button class='btn btn-primary' type='submit'>Post</button></span></form></div></div></div>").fadeIn(500));
+            $("#add-event")[0].reset();
+            console.log(json.text)
+          }
+          else{
+            $("#event-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div>").fadeIn(500)).fadeOut(6000);
+                $('#add-event')[0].reset();
+          }
+        },
+        error: function(data) {
+            $("#this_post").html("Something went wrong!");
+        }
+    });
+    }
+
+    if ($(this).attr("id") == "post-form"){
+
+    $.ajax({
+        type: "POST",
+        url: "/home/",
+        dataType: "json",
+        data: formData,
+        
+
+        success: function (json) {
+            var $response = json.response
+            if ($response){
+            if (json.image == 'None'){
+            var str = "{% static 'img/default-prof.png' %}"}
+            if (json.image == 'Yes'){
+              var str = json.image_url
+            }
+            if (json.request_image == 'None'){
+            var req_str = "{% static 'img/default-prof.png' %}"}
+            if (json.request_image == 'Yes'){
+              var req_str = json.request_image_url
+            }
+            $("#this_post").prepend($("<div class='panel panel-default'><div class='panel-body'><div class='media'><div class='media-left'><img src='"+str+"' class='media-object' width='40' height='40'/></div><div class='media-body'><a href='/members/"+json.user+"/'> <b>"+json.first_name+" "+json.last_name+"</b></a><br><small>"+json.created+"</small></div><br>"+json.text+"</div></div><div class='panel-footer'><div id='reply_ajax_"+json.id+"'></div><form style='padding-top:10px;'method='POST' action='/home/' name='example' id='ajax_"+json.id+"' class='reply_form' enctype='multipart/form-data'> {% csrf_token %}<input type='hidden' name='parent_id' value='"+json.id+"'><div class='input-group'><img style='float:left' src='"+req_str+"' width='35' height='35'/><div style='overflow: hidden; padding-left: .5em;'><input name='mypost' type='text' class='form-control' placeholder='Reply to comment'></div><span class='input-group-btn'><button class='btn btn-primary' type='submit'>Post</button></span></form></div></div></div>").fadeIn(500));
+            $(".post-form")[0].reset();
+            console.log(json.text)
+          }
+          else{
+            $("#post-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div>")).fadeIn(3000).fadeOut(4000);
+                $('#post-form')[0].reset();
+          }
+        },
+        error: function(data) {
+            $("#this_post").html("Something went wrong!");
+        }
+    });
+    }
+
+    if ($(this).attr('id').indexOf('reply_form') > -1 ){
+        
+    $.ajax({
+        type: "POST",
+        url: "/home/",
+        dataType: "json",
+        data: formData,
+        
+        success: function (json) {
+          var $response = json.response;
+            if ($response){
+            var id = json.parent_id;
+            console.log(id);
+            if (json.image == 'None'){
+            var str = "{% static 'img/default-prof.png' %}"}
+            if (json.image == 'Yes'){
+              var str = json.image_url
+            }
+            if (json.request_image == 'None'){
+            var req_str = "{% static 'img/default-prof.png' %}"}
+            if (json.request_image == 'Yes'){
+              var req_str = json.request_image_url
+            }
+           $('#reply_post_' + id).prepend($("<div class='media'><div class='media-left'><img src='"+str+"' class='media-object' width='40' height='40' /></div><div class='media-body'> <small><b>"+json.first_name+" "+json.last_name+"</b></small> <small> "+json.text+" </small><br><small>"+json.created+"</small></div></div> ").fadeIn(500));
+            $('.reply_form_'+id)[0].reset()
+            console.log(json.text)
+          }
+          else{
+            $("#post-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div>")).fadeIn(3000).fadeOut(4000);
+          }
+        },
+        error: function(data) {
+            $("#this_post").html("Something went wrong!");
+        }
+    });
+    
+    }
+
+    if ($(this).attr('id').indexOf('ajax') > -1 ){
+        
+    $.ajax({
+        type: "POST",
+        url: "/home/",
+        dataType: "json",
+        data: formData,
+        
+        success: function (json) {
+          var $response = json.response
+            if ($response){
+            var id = json.parent_id;
+            console.log(id);
+            if (json.image == 'None'){
+            var str = "{% static 'img/default-prof.png' %}"}
+            if (json.image == 'Yes'){
+              var str = json.image_url
+            }
+            if (json.request_image == 'None'){
+            var req_str = "{% static 'img/default-prof.png' %}"}
+            if (json.request_image == 'Yes'){
+              var req_str = json.request_image_url
+            }
+           $('#reply_ajax_'+ id).prepend($("<div class='media'><div class='media-left'> <img src='"+str+"' class='media-object' width='40' height='40' /></div><div class='media-body'> <small><b>"+json.first_name+" "+json.last_name+"</b></small> <small>"+json.text+"</small><br><small>"+json.created+"</small></div> </div>").fadeIn(500));
+            $('.reply_form')[0].reset()
+            console.log(json.text);
+          }
+          else{
+            $("#post-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div>")).fadeIn(3000).fadeOut(4000);
+          }
+        },
+        error: function(data) {
+            $("#this_post").html("Something went wrong!");
+        }
+    });
+    
+    }
+
+    if ($form.attr("id") == "add_team"){
+    var formData = new FormData(this);
+    $.ajax({
+        type:'POST',
+        url: "/add_team/",
+        data:formData,
+        cache:false,
+        contentType: false,
+        processData: false,
+        
+        
+        success: function (json) {
+          var $response = json.response
+            if ($response){  
+            
+                $('#myModalTeam').modal('hide');
+                $("#add_team_success").html($("<div class='alert alert-success' role='alert'>Successfully added new team!</div>")).fadeIn(2000).fadeOut(6000);
+                $('#add_team')[0].reset();
+            
+             }
+            else{
+              $("#add_team_error").html($("<div class='alert alert-danger' role='alert'>Logo is optional. Please fill out the rest of the fields.</div></p>")).fadeIn(2000).fadeOut(6000);
+                $('#add_team')[0].reset();
+            }
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "add_frat"){
+    var formData = new FormData(this);
+    $.ajax({
+        type:'POST',
+        url: "/add_frat/",
+        data:formData,
+        cache:false,
+        contentType: false,
+        processData: false,
+        
+        
+        success: function (json) {
+          var $response = json.response
+            if ($response){  
+            
+                $('#myModalFrat').modal('hide');
+                $("#add_frat_success").html($("<div class='alert alert-success' role='alert'>Successfully added new frat!</div>")).fadeIn(2000).fadeOut(6000);
+                $('#add_team')[0].reset();
+            
+             }
+            else{
+              $("#add_frat_error").html($("<div class='alert alert-danger' role='alert'>Logo is optional. Please fill out the rest of the fields.</div></p>")).fadeIn(2000).fadeOut(6000);
+                $('#add_frat')[0].reset();
+            }
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+  
+
+    if ($form.attr("id") == "add_club"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/add_club/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+          var $response = json.response
+            if ($response){  
+            
+                $('#myModalClub').modal('hide');
+                $("#add_club_success").html($("<div class='alert alert-success' role='alert'>Successfully added new club!</div>")).fadeIn(2000).fadeOut(6000);
+                $('#add_club')[0].reset();
+            
+             }
+            else{
+              $("#add_club_error").html($("<div class='alert alert-danger' role='alert'>Logo is optional. Please fill out the rest of the fields.</div></p>")).fadeIn(2000).fadeOut(6000);
+                $('#add_club')[0].reset();
+            }
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+
+    
+
+    if ($form.attr("id") == "delete_team"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_team/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                id = json.id
+                $("#team_" + id).hide();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete_club"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_club/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                id = json.id
+                $("#club_" + id).hide();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete_frat"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_frat/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                id = json.id
+                $("#frat_" + id).hide();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete_course"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_course/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                id = json.id
+                $("#course_" + id).hide();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                id = json.id
+                $("#assign_" + id).hide();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    }); 
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+var csrftoken = getCookie('csrftoken');
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+
+}
+
+function sameOrigin(url) {
+    // test that a given url is a same-origin URL
+    // url could be relative or scheme relative or absolute
+    var host = document.location.host; // host + port
+    var protocol = document.location.protocol;
+    var sr_origin = '//' + host;
+    var origin = protocol + sr_origin;
+    // Allow absolute or scheme relative URLs to same origin
+    return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+        // or any other URL that isn't scheme relative or absolute i.e relative.
+        !(/^(\/\/|http:|https:).*/.test(url));
+}
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
+
+
+</script>
+{% endblock %}

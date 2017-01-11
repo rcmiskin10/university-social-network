@@ -1,0 +1,61 @@
+{% extends 'reg_base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<style>
+     .form{
+        padding-top:100px;
+        opacity:0.90;
+    }
+
+    body {
+            background: url('{% static "img/school3.jpg" %}') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+            font-family: 'Raleway',sans-serif;
+            
+            }
+
+      .navbar{
+  background:transparent;
+  border-bottom:none;
+  color:black;
+  } 
+
+
+  
+@media (max-width: 767px) {
+  
+.navbar {
+  background-color:black;
+}
+}
+</style>
+
+
+
+<div style='text-align:center;' class='form col-lg-4 col-lg-offset-4'>
+<div class='panel panel-default'>
+        <div class='panel-body'>
+    
+
+<h1 style='color:black;'>Upload a photo of yourself.</h1>
+
+
+<form method='POST' action='/profile_info/image/' enctype="multipart/form-data"> {% csrf_token %}
+        
+        <div style='color:black; text-align:center;' class='col-lg-4 col-lg-offset-4'>
+         {{ formset_pic.management_form }}
+         {% for form in formset_pic %}
+        {% crispy form form.helper %}
+        {% endfor %}
+      </div>
+</form><br><br><br><br><br><br><br><br>Or<br><br><br><a href='/home/'>Skip</a>
+
+</div><!--panel-body-->
+</div><!--panel-default-->
+</div><!--col-lg-4-->
+{% endblock %}

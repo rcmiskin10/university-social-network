@@ -1,0 +1,1082 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+<script>
+{% block jquery %}
+
+$(function() {
+    $( ".datepicker" ).datepicker();
+  });
+
+$('#textbook-link').click(function(e){
+  e.preventDefault();
+  $("#newest").hide();
+  $("#other").hide();
+  $("#housing").hide();
+  $("#room").hide();
+  $("#tutor").hide();
+  $("#electronic").hide();
+  $("#apparel").hide();
+  $("#search-results").hide();
+  $('#textbook').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+
+$('#apparel-link').click(function(e){
+  e.preventDefault();
+  $("#newest").hide();
+  $("#other").hide();
+  $("#housing").hide();
+  $("#room").hide();
+  $("#tutor").hide();
+  $("#electronic").hide();
+  $("#textbook").hide();
+  $("#search-results").hide();
+  $('#apparel').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+
+$('#other-link').click(function(e){
+  e.preventDefault();
+  $("#newest").hide();
+  $("#textbook").hide();
+  $("#housing").hide();
+  $("#room").hide();
+  $("#tutor").hide();
+  $("#electronic").hide();
+  $("#apparel").hide();
+  $("#search-results").hide();
+  $('#other').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+$('#electronic-link').click(function(e){
+  e.preventDefault();
+  $("#newest").hide();
+  $("#textbook").hide();
+  $("#housing").hide();
+  $("#room").hide();
+  $("#tutor").hide();
+  $("#other").hide();
+  $("#apparel").hide();
+  $("#search-results").hide();
+  $('#electronic').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+$('#room-link').click(function(e){
+  e.preventDefault();
+  $("#newest").hide();
+  $("#textbook").hide();
+  $("#housing").hide();
+  $("#electronic").hide();
+  $("#tutor").hide();
+  $("#other").hide();
+  $("#apparel").hide();
+  $("#search-results").hide();
+  $('#room').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+$('#tutor-link').click(function(e){
+  e.preventDefault();
+  $("#newest").hide();
+  $("#textbook").hide();
+  $("#housing").hide();
+  $("#electronic").hide();
+  $("#room").hide();
+  $("#other").hide();
+  $("#apparel").hide();
+  $("#search-results").hide();
+  $('#tutor').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+$('#housing-link').click(function(e){
+  e.preventDefault();
+  $("#newest").hide();
+  $("#textbook").hide();
+  $("#tutor").hide();
+  $("#electronic").hide();
+  $("#room").hide();
+  $("#other").hide();
+  $("#apparel").hide();
+  $("#search-results").hide();
+  $('#housing').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+})
+
+$('.edit_schedule').click(function(e){
+  
+  e.preventDefault();
+  
+  $(this).next('.schedule').fadeToggle();
+  //$('.reply_comment').fadeToggle();
+})
+{% endblock %}
+</script>
+{% block content %}
+
+<style>
+.sched{
+  background-color:#E0E0E0;
+  border: none;
+  color:black;
+
+}
+#main{
+	padding-top:75px;
+}
+.schedule {
+  display:none;
+    }
+#list{
+  padding-top:0px;
+  padding-bottom:0px;
+  background-color:#E0E0E0;
+}
+
+#other{
+	display:none;
+}
+#housing{
+	display:none;
+}
+#apparel{
+  display:none;
+}
+#textbook{
+  display:none;
+}
+#room{
+	display:none;
+}
+#tutor{
+	display:none;
+}
+#electronic{
+	display:none;
+}
+</style>
+
+
+<div class="container" id="main">
+	<div class="row">
+
+		<div class="col-md-3 col-sm-5">
+        <div class="panel panel-default">
+          
+   			<div class="panel-body">
+   				<div id='add_product_success'></div>
+   					 <h4>Profile<h4>
+                <div class="media">
+              {% for item in request.user.userpicture_set.all %}
+                    
+                    {% if item.image %}
+                        
+                            <div class="media-left">
+                            <img src='{{ item.image.url }}' width="50" height="50" />
+                        </div>
+                        
+                    {% endif %}
+                
+                    
+                
+            {% endfor %}
+                   {% if not request.user.userpicture_set.all %}
+            <div class="media-left">
+                    <img src='{% static "img/default-prof.png" %}' width="50" height="50" />
+                    </div>
+            {% endif %} 
+                    <div class="media-body">
+                        <br>
+                        <a href='/profile/{{ request.user.id }}/'>
+                        <b>{{ request.user.first_name }} {{ request.user.last_name }}</b>
+                        </a>
+                      
+                    </div>
+                </div>
+
+
+   				
+
+
+   			</div>
+	   </div>
+
+	   <div class="panel panel-default">
+          
+   			<div class="panel-body">
+   				<a href='/home/u-marketplace/'>U-Marketplace</a>
+   				<h4>Account History</h4>
+
+   				<a id='selling' href='/home/u-marketplace/account-history/selling/'>Your Item(s) Selling</a><br>
+   				<a id='sold' href='/home/u-marketplace/account-history/sold/'>Your Item(s) Sold</a>
+   			</div>
+   		</div>
+
+	   </div>
+
+<div class="modal fade" id="myModalProduct" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Add Club</h4>
+                  </div>
+                  <div class="modal-body">
+                    <form id='add_product' method='POST' action='/add_product/' enctype='multipart/form-data'> {% csrf_token %}
+                    <div style='color:red' id='add_product_error'>
+                    </div>
+                    
+                   
+                {% crispy product_form %}
+                
+            </form>
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+         
+            
+	<div class="col-md-6 col-sm-8">
+    <div class="panel panel-default">
+		<div class="panel-body">
+			<h4 style='text-align:center;'>University Marketplace - Buy and Sell Items Within Your Campus</h4><br>
+			<div style='display:flex;'class="row">
+				<div class='col-md-3 col-sm-4 col-xs-4'>
+					<a href='#' data-toggle="modal" data-target="#myModalProduct"><button id='sell-button' class="btn btn-primary" type="button">Sell Product</button></a>
+				</div>
+				<div class='col-md-9 col-sm-12 col-xs-12'>
+					
+					<div class="input-group">
+                <input name='search_text' id='search' type="text" class="form-control" placeholder="Search product... ">
+                <span class="input-group-btn">
+                  <input id='search-submit' class="btn btn-default" value="Search" type="submit"/>
+                </span>
+				  </div><!--input-group-->
+				</div>
+			</div><!--flex-->
+		
+		</div><!--panel-body-->
+
+	</div><!--panel default-->
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<div id='search-items'>
+
+			</div>
+			<div id='list-items'>
+        <div class="dropdown">
+         <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    Categories
+    <span class="caret"></span>
+  </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                
+                <li role="presentation"><a href='#' id='textbook-link'>Textbooks</a></li>
+                <li role="presentation" ><a href='#' id='apparel-link'>Apparel</a></li>
+                <li role="presentation" ><a href='#' id='electronic-link'>Electronics</a></li>
+                <li role="presentation" ><a href='#' id='room-link'>Furniture</a></li>
+                <li role="presentation" ><a href='#' id='housing-link'>Sublet</a></li>
+                <li role="presentation" ><a href='#' id='tutor-link'>Tutors</a></li>
+                <li role="presentation" ><a href='#' id='other-link'>Other</a></li>
+                
+                
+              </ul>
+            </div>
+			<!--<h4 style='text-align:center;'><a href='#' id='textbook-link'>Textbooks</a> | <a href='#' id='electronic-link'>Electronics</a> | <a href='#' id='room-link'>Room</a> | <a href='#' id='tutor-link'>Tutors</a> | <a href='#' id='housing-link'>Housing</a> | <a href='#' id='other-link'>Other</a></h4>-->
+<hr>
+<div id='search-results'></div>
+
+</div>
+
+    <div id='newest'>
+      {% for item in newest %}
+        <div id='textbook_{{ item.id }}'>
+              <div class='media'>
+              <div class='media-left'>
+                {% if item.image %}
+                            <img src='{{ item.image.url }}' width="100" height="100" /><br>
+                            {% endif %}
+                            {% if not item.image %}
+                            <img src='{% static "img/product.png" %}' width="100" height="100" /><br>
+                            {% endif %}
+              </div><!--media-left-->
+              <div class='media-body'>
+                  <b>{{ item.title }}</b> - ${{ item.price }}<br>
+                  {{ item.description }}<br><br>
+                  ~ <a href='/profile/{{ item.owner.id }}/'>{{ item.owner.first_name }} {{ item.owner.last_name }}</a>
+              </div><!--media-body-->
+              <div class='media-right'>
+                {% if not request.user == item.owner %}
+                  <a href='/products/{{ item.id }}/messages/'><button class="btn btn-primary" type="button">Message</button></a>
+                  {% endif %}
+                  <br><br>
+                  {% if request.user == item.owner %}
+                  <form id='sold' action='/sold/' method='POST'>{% csrf_token %}
+                    <input type='hidden' value='{{ item.id }}' name='product_id'>
+                    <button class="btn btn-success" type="submit">Mark as Sold</button>
+                  </form>
+
+                  {% endif %}
+                </div><!--div media-right-->
+              
+              </div><!--media-->
+              <hr>
+          </div>
+
+        
+              {% endfor %}
+
+
+    </div>
+			<div id='textbook'>
+
+				{% for item in textbooks %}
+				<div id='textbook_{{ item.id }}'>
+		          <div class='media'>
+		          <div class='media-left'>
+		          	{% if item.image %}
+                            <img src='{{ item.image.url }}' width="100" height="100" /><br>
+                            {% endif %}
+                            {% if not item.image %}
+                            <img src='{% static "img/product.png" %}' width="100" height="100" /><br>
+                            {% endif %}
+		          </div><!--media-left-->
+		          <div class='media-body'>
+		              <b>{{ item.title }}</b> - ${{ item.price }}<br>
+		              {{ item.description }}<br><br>
+		              ~ <a href='/profile/{{ item.owner.id }}/'>{{ item.owner.first_name }} {{ item.owner.last_name }}</a>
+		          </div><!--media-body-->
+		          <div class='media-right'>
+		          	{% if not request.user == item.owner %}
+		              <a href='/products/{{ item.id }}/messages/'><button class="btn btn-primary" type="button">Message</button></a>
+		              {% endif %}
+		              <br><br>
+		              {% if request.user == item.owner %}
+		              <form id='sold' action='/sold/' method='POST'>{% csrf_token %}
+		              	<input type='hidden' value='{{ item.id }}' name='product_id'>
+		              	<button class="btn btn-success" type="submit">Mark as Sold</button>
+		              </form>
+
+		              {% endif %}
+		            </div><!--div media-right-->
+		          
+		          </div><!--media-->
+		          <hr>
+		      </div>
+          		{% endfor %}
+
+          	</div><!--textbook id -->
+			
+
+			<div id='electronic' >
+				{% for item in electronics %}
+        <div id='electronic_{{ item.id }}'>
+		          <div class='media'>
+		          <div class='media-left'>
+		          	{% if item.image %}
+                            <img src='{{ item.image.url }}' width="100" height="100" /><br>
+                            {% endif %}
+                            {% if not item.image %}
+                            <img src='{% static "img/product.png" %}' width="100" height="100" /><br>
+                            {% endif %}
+		          </div><!--media-left-->
+		          <div class='media-body'>
+		              <b>{{ item.title }}</b> - ${{ item.price }}<br>
+		              {{ item.description }}<br><br>
+		              ~ <a href='/profile/{{ item.owner.id }}/'>{{ item.owner.first_name }} {{ item.owner.last_name }}</a>
+		          </div><!--media-body-->
+		          <div class='media-right'>
+		              {% if not request.user == item.owner %}
+                  <a href='/products/{{ item.id }}/messages/'><button class="btn btn-primary" type="button">Message</button></a>
+                  {% endif %}
+                  <br><br>
+                  {% if request.user == item.owner %}
+                  <form id='sold' action='/sold/' method='POST'>{% csrf_token %}
+                    <input type='hidden' value='{{ item.id }}' name='product_id'>
+                    <button class="btn btn-success" type="submit">Mark as Sold</button>
+                  </form>
+
+                  {% endif %}
+		            </div><!--div media-right-->
+		          
+		          </div><!--media-->
+		          <hr>
+            </div>
+          		{% endfor %}
+			</div>
+
+			<div id='room'>
+				{% for item in rooms %}
+        <div id='room_{{ item.id }}'>
+		          <div class='media'>
+		          <div class='media-left'>
+		          	{% if item.image %}
+                            <img src='{{ item.image.url }}' width="100" height="100" /><br>
+                            {% endif %}
+                            {% if not item.image %}
+                            <img src='{% static "img/product.png" %}' width="100" height="100" /><br>
+                            {% endif %}
+		          </div><!--media-left-->
+		          <div class='media-body'>
+		              <b>{{ item.title }}</b> - ${{ item.price }}<br>
+		              {{ item.description }}<br><br>
+		              ~ <a href='/profile/{{ item.owner.id }}/'>{{ item.owner.first_name }} {{ item.owner.last_name }}</a>
+		          </div><!--media-body-->
+		          <div class='media-right'>
+		              {% if not request.user == item.owner %}
+                  <a href='/products/{{ item.id }}/messages/'><button class="btn btn-primary" type="button">Message</button></a>
+                  {% endif %}
+                  <br><br>
+                  {% if request.user == item.owner %}
+                  <form id='sold' action='/sold/' method='POST'>{% csrf_token %}
+                    <input type='hidden' value='{{ item.id }}' name='product_id'>
+                    <button class="btn btn-success" type="submit">Mark as Sold</button>
+                  </form>
+
+                  {% endif %}
+		            </div><!--div media-right-->
+		          
+		          </div><!--media-->
+		          <hr>
+            </div>
+          		{% endfor %}
+			</div>
+
+			<div id='tutor'>
+				{% for item in tutors %}
+        <div id='tutor_{{ item.id }}'>
+		          <div class='media'>
+		          <div class='media-left'>
+		          	{% if item.image %}
+                            <img src='{{ item.image.url }}' width="100" height="100" /><br>
+                            {% endif %}
+                            {% if not item.image %}
+                            <img src='{% static "img/product.png" %}' width="100" height="100" /><br>
+                            {% endif %}
+		          </div><!--media-left-->
+		          <div class='media-body'>
+		              <b>{{ item.title }}</b> - ${{ item.price }}<br>
+		              {{ item.description }}<br><br>
+		              ~ <a href='/profile/{{ item.owner.id }}/'>{{ item.owner.first_name }} {{ item.owner.last_name }}</a>
+		          </div><!--media-body-->
+		          <div class='media-right'>
+		              {% if not request.user == item.owner %}
+                  <a href='/products/{{ item.id }}/messages/'><button class="btn btn-primary" type="button">Message</button></a>
+                  {% endif %}
+                  <br><br>
+                  {% if request.user == item.owner %}
+                  <form id='sold' action='/sold/' method='POST'>{% csrf_token %}
+                    <input type='hidden' value='{{ item.id }}' name='product_id'>
+                    <button class="btn btn-success" type="submit">Mark as Sold</button>
+                  </form>
+
+                  {% endif %}
+		            </div><!--div media-right-->
+		          
+		          </div><!--media-->
+		          <hr>
+            </div>
+          		{% endfor %}
+			</div>
+
+			<div id='housing'>
+				{% for item in housing %}
+        <div id='housing_{{ item.id }}'>
+		          <div class='media'>
+		          <div class='media-left'>
+		          	{% if item.image %}
+                            <img src='{{ item.image.url }}' width="100" height="100" /><br>
+                            {% endif %}
+                            {% if not item.image %}
+                            <img src='{% static "img/product.png" %}' width="100" height="100" /><br>
+                            {% endif %}
+		          </div><!--media-left-->
+		          <div class='media-body'>
+		              <b>{{ item.title }}</b> - ${{ item.price }}<br>
+		              {{ item.description }}<br><br>
+		              ~ <a href='/profile/{{ item.owner.id }}/'>{{ item.owner.first_name }} {{ item.owner.last_name }}</a>
+		          </div><!--media-body-->
+		          <div class='media-right'>
+		              {% if not request.user == item.owner %}
+                  <a href='/products/{{ item.id }}/messages/'><button class="btn btn-primary" type="button">Message</button></a>
+                  {% endif %}
+                  <br><br>
+                  {% if request.user == item.owner %}
+                  <form id='sold' action='/sold/' method='POST'>{% csrf_token %}
+                    <input type='hidden' value='{{ item.id }}' name='product_id'>
+                    <button class="btn btn-success" type="submit">Mark as Sold</button>
+                  </form>
+
+                  {% endif %}
+		            </div><!--div media-right-->
+		          
+		          </div><!--media-->
+		          <hr>
+            </div>
+          		{% endfor %}
+			</div>
+
+			<div id='other'>
+				{% for item in others %}
+        <div id='other_{{ item.id }}'>
+		          <div class='media'>
+		          <div class='media-left'>
+		          	{% if item.image %}
+                            <img src='{{ item.image.url }}' width="100" height="100" /><br>
+                            {% endif %}
+                            {% if not item.image %}
+                            <img src='{% static "img/product.png" %}' width="100" height="100" /><br>
+                            {% endif %}
+		          </div><!--media-left-->
+		          <div class='media-body'>
+		              <b>{{ item.title }}</b> - ${{ item.price }}<br>
+		              {{ item.description }}<br><br>
+		              ~ <a href='/profile/{{ item.owner.id }}/'>{{ item.owner.first_name }} {{ item.owner.last_name }}</a>
+		          </div><!--media-body-->
+		          <div class='media-right'>
+		              {% if not request.user == item.owner %}
+                  <a href='/products/{{ item.id }}/messages/'><button class="btn btn-primary" type="button">Message</button></a>
+                  {% endif %}
+                  <br><br>
+                  {% if request.user == item.owner %}
+                  <form id='sold' action='/sold/' method='POST'>{% csrf_token %}
+                    <input type='hidden' value='{{ item.id }}' name='product_id'>
+                    <button class="btn btn-success" type="submit">Mark as Sold</button>
+                  </form>
+
+                  {% endif %}
+		            </div><!--div media-right-->
+		          
+		          </div><!--media-->
+		          <hr>
+            </div>
+          		{% endfor %}
+          	</div>
+
+            <div id='apparel'>
+        {% for item in apparels %}
+        <div id='apparel_{{ item.id }}'>
+              <div class='media'>
+              <div class='media-left'>
+                {% if item.image %}
+                            <img src='{{ item.image.url }}' width="100" height="100" /><br>
+                            {% endif %}
+                            {% if not item.image %}
+                            <img src='{% static "img/product.png" %}' width="100" height="100" /><br>
+                            {% endif %}
+              </div><!--media-left-->
+              <div class='media-body'>
+                  <b>{{ item.title }}</b> - ${{ item.price }}<br>
+                  {{ item.description }}<br><br>
+                  ~ <a href='/profile/{{ item.owner.id }}/'>{{ item.owner.first_name }} {{ item.owner.last_name }}</a>
+              </div><!--media-body-->
+              <div class='media-right'>
+                  {% if not request.user == item.owner %}
+                  <a href='/products/{{ item.id }}/messages/'><button class="btn btn-primary" type="button">Message</button></a>
+                  {% endif %}
+                  <br><br>
+                  {% if request.user == item.owner %}
+                  <form id='sold' action='/sold/' method='POST'>{% csrf_token %}
+                    <input type='hidden' value='{{ item.id }}' name='product_id'>
+                    <button class="btn btn-success" type="submit">Mark as Sold</button>
+                  </form>
+
+                  {% endif %}
+                </div><!--div media-right-->
+              
+              </div><!--media-->
+              <hr>
+            </div>
+              {% endfor %}
+            </div>
+
+          	</div><!--list-items-->
+			
+
+		</div>
+	</div>
+	
+
+		<div class="col-md-3 col-sm-5">
+         <div class="panel panel-default">
+           
+   			<div class="panel-body">
+   				<h4 style="text-align:center;">Schedule</h4>
+          <div id='sched-error'></div>
+<hr>
+<a href='#' class='edit_schedule'>Add to Schedule</a>
+              <div class='schedule' style='text-align:center;'>
+              <form id='schedule' method='POST' action='/main_schedule/' enctype='multipart/form-data'> {% csrf_token %}
+              
+                
+              {{ schedule_form.duedate }}<br>
+              {{ schedule_form.text }}<br>
+              {{ schedule_form.management_form }}
+              
+              
+              
+              <input class='btn btn-success' type='submit' value='Add'/>
+              </form>
+            
+
+          </div><br><br>
+   				{% for item in f %}
+
+
+                
+				<div id='assign_{{ item.0 }}' class="panel panel-default">
+				          
+				        <div id ='list'class="panel-body">
+
+				          <div style='display:flex;'class="row">
+				            <div style='color:white;background-color:red;'class='col-lg-4'>
+				            <h5>{{ item.1|date:"M d, Y" }}</h5>
+				          </div>
+				            <div style='background-color:#E0E0E0;' class='col-lg-8'>
+				            
+				           {{ item.2 }} <br> {{ item.3 }}
+				           {% if item.4 == 'main' %}
+           <form id='delete-main-schedule' method='POST' action='/delete_main_sched/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='sched_id'></form>
+          {% endif %}
+           {% if item.4 == 'team' %}
+           <form id='delete-team-schedule' method='POST' action='/delete_team_sched/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='sched_id'></form>
+          {% endif %}
+          {% if item.4 == 'frat' %}
+           <form id='delete-frat-schedule' method='POST' action='/delete_frat_sched/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='sched_id'></form>
+          {% endif %}
+          {% if item.4 == 'club' %}
+           <form id='delete-club-schedule' method='POST' action='/delete_sched/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='sched_id'></form>
+          {% endif %}
+          {% if item.4 == 'course' %}
+
+           <form id='delete-course-schedule' method='POST' action='/delete_assign/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='assign_id'></form>
+          {% endif %}
+				          </div>
+				          </div>
+				        
+				    </div>
+
+				</div>
+{% endfor %}
+<div style='text-align:center;'class="pagination">
+    <span class="step-links">
+        {% if f.has_previous %}
+            <a href="?page={{ f.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ f.number }} of {{ f.paginator.num_pages }}.
+        </span>
+
+        {% if f.has_next %}
+            <a href="?page={{ f.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+   			</div>
+   		</div>
+      <div class="panel panel-default">
+           
+        <div style='text-align:center;' class="panel-body">
+          <h4>New to Student Grounds?</h4>
+          <h5>Click here to take a short tour of our U-Marketplace Page features.<h5><br>
+          <a id='tour-link' href='#'><button class='btn btn-primary' type='button'>Tour</button></a>
+        </div><!--panel-body-->
+
+      </div><!--panel-default-->
+   		</div>
+
+
+
+	</div><!--div row-->
+</div><!--main-->
+
+<script>
+
+$('#tour-link').click(function(e){
+  
+var tour = new Tour({
+  steps: [
+  
+  {
+    
+    title: "Welcome!",
+    content: "Welcome to the U-Marketplace! Here's a quick tour.",
+    backdrop: true,
+    orphan: true,
+  },
+  {
+    element: "#selling",
+    title: "What your selling.",
+    content: "This is where you can find what you're currently selling.",
+    backdrop: true,
+    placement: 'right',
+  },
+  {
+    element: "#sold",
+    title: "What you've sold.",
+    content: "This is where you can find what you've sold.",
+    backdrop: true,
+    placement: 'right',
+  },
+
+  {
+    element: "#sell-button",
+    title: "Sell a Product or Service.",
+    content: "Click the 'sell product' button to sell a product or service within your school.Make sure to fill out all the information including picture to draw interest.",
+    backdrop: true,
+    placement: 'bottom',
+  },
+
+  {
+    element: "#search",
+    title: "Search products.",
+    content: "Search any product that you're looking to buy, and express interest in product by messaging the owner. Find a method to pay for it and pick it up by messaging each other!",
+    backdrop: true,
+    placement: 'bottom',
+  },
+
+   {
+    element: "#list-items",
+    title: "Mark as sold",
+    content: "If you are the seller and have sold it or want to take down the listing, you can mark your product “sold,” which is found next to the listing.",
+    backdrop: true,
+    placement: 'right',
+  },
+  
+
+
+  
+  
+]});
+
+// Initialize the tour
+tour.init();
+
+// Start the tour
+tour.start();
+tour.restart();
+});
+$(function(){
+  $('#search-submit').click(function(){
+    $.ajax({
+      type: "POST",
+      url:"/home/u-marketplace/search/",
+      data: {
+        'search_text' : $('#search').val(),
+        
+
+      },
+      success: searchSuccess,
+      dataType: 'html'
+    });
+  });
+});
+
+function searchSuccess(data, textStatus, jqXHR)
+{
+  $('#search-results').html(data);
+  $('#textbook').hide();
+  $('#room').hide();
+  $('#electronic').hide();
+  $('#housing').hide();
+  $('#other').hide();
+  $('#tutor').hide();
+  $('#newest').hide();
+  $("#apparel").hide();
+  $('#search-results').show();
+  $("#search").val("");
+}
+
+$('form').live('submit', function(event) {
+
+    event.preventDefault();
+    
+    var $form = $(this);
+    var id = $form.attr('id');
+    var formData = $form.serialize();
+    
+
+    if ($form.attr("id") == "schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/main_schedule/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            var $response = json.response
+            if ($response){
+                document.location.reload();
+                
+            }
+            else{
+              $("#sched-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div>")).fadeIn(2000).fadeOut(3000);
+                $('#schedule')[0].reset();
+            }
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete-main-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_main_sched/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                document.location.reload();
+                
+            
+             
+
+        },
+        error: function(data) {
+          
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete-course-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_assign/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                document.location.reload();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+    if ($form.attr("id") == "delete-club-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_sched/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+             
+                document.location.reload();
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete-frat-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_frat_sched/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                document.location.reload();
+                
+            
+             
+
+        },
+        error: function(data) {
+          
+            
+        }
+    });
+    }
+    if ($form.attr("id") == "delete-team-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_team_sched/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                document.location.reload();
+                
+            
+             
+
+        },
+        error: function(data) {
+          
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "add_product"){
+    
+    var formData = new FormData(this);
+    $.ajax({
+        type:'POST',
+        url: "/add_product/",
+        data:formData,
+        cache:false,
+        contentType: false,
+        processData: false,
+        
+        
+        success: function (json) {
+          var $response = json.response
+            if ($response){  
+            
+                $('#myModalProduct').modal('hide');
+                $("#add_product_success").html($("<div class='alert alert-success' role='alert'>Successfully added new product!</div>")).fadeIn(2000).fadeOut(6000);
+                document.location.reload();
+                $('#add_product')[0].reset();
+            
+             }
+            else{
+              $("#add_product_error").html($("<div class='alert alert-danger' role='alert'>Image is optional. Please fill out the rest of the fields.</div></p>")).fadeIn(2000).fadeOut(6000);
+                $('#add_product')[0].reset();
+            }
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+    
+    if ($form.attr("id") == "sold"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/sold/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+          
+            console.log(json.id)
+            $('#textbook_'+ json.id).hide();
+            $('#housing_'+ json.id).hide();
+            $('#electronic_'+ json.id).hide();
+            $('#room_'+ json.id).hide();
+            $('#other_'+ json.id).hide();
+            $('#tutor_'+ json.id).hide();
+
+            
+            
+            
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+
+});
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+var csrftoken = getCookie('csrftoken');
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+
+}
+
+function sameOrigin(url) {
+    // test that a given url is a same-origin URL
+    // url could be relative or scheme relative or absolute
+    var host = document.location.host; // host + port
+    var protocol = document.location.protocol;
+    var sr_origin = '//' + host;
+    var origin = protocol + sr_origin;
+    // Allow absolute or scheme relative URLs to same origin
+    return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+        // or any other URL that isn't scheme relative or absolute i.e relative.
+        !(/^(\/\/|http:|https:).*/.test(url));
+}
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,353 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+<style>
+.sched{
+  background-color:#E0E0E0;
+  border: none;
+  color:black;
+
+}
+.schedule {
+  display:none;
+    }
+#main{
+	padding-top:75px;
+}
+
+#list{
+  padding-top:0px;
+  padding-bottom:0px;
+  background-color:#E0E0E0;
+}
+
+</style>
+
+<div class="container" id="main">
+   <div class="row">
+
+   <div class="col-md-3 col-sm-5">
+        <div class="panel panel-default">
+          
+   			<div class="panel-body">
+            
+	      	
+                        <ul class="nav nav-pills nav-stacked">
+                            <li class="active"><a href="/messages/inbox/"> Inbox  <span class="label label-theme pull-right inbox-notification">{{ request.session.num_of_messages }}</span></a></li>
+                            <li><a href="/messages/sent/">  Sent </a></li>
+                            
+                        </ul>
+
+   				
+              
+            </div>
+   		</div>
+        
+     
+   
+
+	</div>
+
+
+	<div class="col-md-6 col-sm-8">
+      	 
+		<div class="panel panel-default">
+			<div class="panel-body">
+        <h4>View Sent Message</h4><br>
+			From You to <a href='/profile/{{ message.receiver.id }}/'>{{ message.receiver.first_name }} {{ message.receiver.last_name }}</a>, on {{ message.sent }}<hr>
+<b>Subject:</b> {{ message }}<hr>
+<div class='well'>
+
+{{ message.body }}
+
+</div>
+<hr>
+
+
+
+			</div>
+		</div>
+
+	</div>
+
+
+
+	<div class="col-md-3 col-sm-5">
+         <div class="panel panel-default">
+           
+   			<div class="panel-body">
+   				<h4 style="text-align:center;">Schedule</h4>
+           <div id='sched-error'></div>
+<hr>
+<a href='#' class='edit_schedule'>Add to Schedule</a>
+              <div class='schedule' style='text-align:center;'>
+              <form id='schedule' method='POST' action='/main_schedule/' enctype='multipart/form-data'> {% csrf_token %}
+              
+                
+              {{ schedule_form.duedate }}<br>
+              {{ schedule_form.text }}<br>
+              {{ schedule_form.management_form }}
+              
+              
+              
+              <input class='btn btn-success' type='submit' value='Add'/>
+              </form>
+            
+
+          </div><br><br>
+
+                  {% for item in f %}
+
+
+                
+                    <div id='assign_{{ item.0 }}' class="panel panel-default">
+                              
+                            <div id ='list'class="panel-body">
+
+                              <div style='display:flex;'class="row">
+                                <div style='color:white;background-color:red;'class='col-lg-4'>
+                                <h5>{{ item.1|date:"M d, Y" }}</h5>
+                              </div>
+                                <div style='background-color:#E0E0E0;' class='col-lg-8'>
+                                
+                               {{ item.2 }} <br> {{ item.3 }}
+                               {% if item.4 == 'main' %}
+           <form id='delete-main-schedule' method='POST' action='/delete_main_sched/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='sched_id'></form>
+          {% endif %}
+           {% if item.4 == 'team' %}
+           <form id='delete-team-schedule' method='POST' action='/delete_team_sched/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='sched_id'></form>
+          {% endif %}
+          {% if item.4 == 'frat' %}
+           <form id='delete-frat-schedule' method='POST' action='/delete_frat_sched/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='sched_id'></form>
+          {% endif %}
+          {% if item.4 == 'club' %}
+           <form id='delete-club-schedule' method='POST' action='/delete_sched/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='sched_id'></form>
+          {% endif %}
+          {% if item.4 == 'course' %}
+
+           <form id='delete-course-schedule' method='POST' action='/delete_assign/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='sched btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='assign_id'></form>
+          {% endif %}
+                              </div>
+                              </div>
+                            
+                        </div>
+
+                    </div>
+                  {% endfor %}
+                  <div style='text-align:center;'class="pagination">
+    <span class="step-links">
+        {% if f.has_previous %}
+            <a href="?page={{ f.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ f.number }} of {{ f.paginator.num_pages }}.
+        </span>
+
+        {% if f.has_next %}
+            <a href="?page={{ f.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+   			</div>
+   		</div>
+   	</div>
+
+
+</div> <!--row-->
+
+</div><!--main-->
+
+
+<script>
+
+$('.edit_schedule').click(function(e){
+  
+  e.preventDefault();
+  
+  $(this).next('.schedule').fadeToggle();
+  //$('.reply_comment').fadeToggle();
+})
+
+$(function() {
+    $( ".datepicker" ).datepicker();
+  });
+
+$('form').live('submit', function(event) {
+
+    event.preventDefault();
+    
+    var $form = $(this);
+    var id = $form.attr('id');
+    var formData = $form.serialize();
+    
+    if ($form.attr("id") == "schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/main_schedule/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            var $response = json.response
+            if ($response){
+                document.location.reload();
+                
+            }
+            else{
+              $("#sched-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div>")).fadeIn(2000).fadeOut(3000);
+                $('#schedule')[0].reset();
+            }
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete-main-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_main_sched/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                document.location.reload();
+                
+            
+             
+
+        },
+        error: function(data) {
+          
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete-course-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_assign/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                document.location.reload();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+    if ($form.attr("id") == "delete-club-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_sched/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+             
+                document.location.reload();
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "delete-frat-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_frat_sched/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                document.location.reload();
+                
+            
+             
+
+        },
+        error: function(data) {
+          
+            
+        }
+    });
+    }
+    if ($form.attr("id") == "delete-team-schedule"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_team_sched/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                document.location.reload();
+                
+            
+             
+
+        },
+        error: function(data) {
+          
+            
+        }
+    });
+    }
+ }); 
+
+
+</script>
+
+{% endblock %}

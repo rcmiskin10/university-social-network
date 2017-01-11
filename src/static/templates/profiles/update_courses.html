@@ -1,0 +1,92 @@
+{% extends 'reg_base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<style>
+    .col-lg-4{
+        padding-top:100px;
+        opacity:0.90;
+    }
+
+   body {
+    background: url('{% static "img/school3.jpg" %}') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    font-family: 'Raleway',sans-serif;
+    
+    }
+
+    .navbar{
+  background:transparent;
+  border-bottom:none;
+  color:black;
+  } 
+
+  #search{
+    border-radius: 5px;
+  }
+
+
+  
+@media (max-width: 767px) {
+  
+.navbar {
+  background-color:black;
+}
+
+}
+</style>
+<div style='text-align:center;' class='col-lg-4 col-lg-offset-4'>
+<div class='panel panel-default'>
+        <div class='panel-body'>
+    
+<h1>Search for your course.</h1>
+
+<h4 style='color:black;'>To get the most out of Student Grounds, let's add some courses you're in!</h4>
+
+{% if messages %}
+   
+
+   
+<div style='text-align:center;'class="messages">
+    {% for message in messages %}
+    {% if 'course' in  message.tags %} <div class="alert alert-success">{{ message }}</div>{% endif %}
+    {% if 'error' in  message.tags %} <div class="alert alert-danger">{{ message }}</div>{% endif %}
+    {% endfor %}
+</div>
+ 
+{% endif %}
+<div class="input-group col-lg-12">
+            <input id='search' type="text" class="form-control" placeholder="Search the of your course...">
+            
+</div><!-- /input-group -->
+
+
+<br><br><br>
+<div id='course-results'>
+
+</div>
+
+<br><br><br>
+<a href='/profile_info/image/'><button class='btn btn-primary'>Next</button></a>
+</div><!--panel-body-->
+</div><!--panel-default-->
+</div><!--col-lg-4-->
+<script>
+$(function() {
+  $("#search").autocomplete({
+    source: "/api/course_search/",
+    minLength: 2,
+    select: function( event , ui ) {
+           $('#course-results').append(""+ui.item.label+" - <form id='student' method='POST' action='/profile_info/courses/"+ui.item.id+"/'> {% csrf_token %} {{ course_form.as_p }}<input class='btn btn-success' type='submit' value='Connect'/></form><br>") ;
+        }
+    
+  });
+});
+
+
+</script>
+{% endblock %}

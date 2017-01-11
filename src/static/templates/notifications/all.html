@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class='container'>
+<table style='margin-top:100px;'class='table'>
+{% for note in notifications %}
+
+<tr><td><a href='/profile/{{ note.recipient.id }}/'>{{ note }} </a></td></tr>
+{% endfor %}
+</table>
+</div>
+{% endblock %}

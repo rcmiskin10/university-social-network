@@ -1,0 +1,178 @@
+
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{% static 'img/favicon.ico' %}">
+
+    <title>Student Grounds</title>
+
+    <script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" />
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/highlighter.js' %}"></script>
+    <script src="{% static 'js/bootstrp-tour.min.js' %}"></script>
+    <link href="{% static 'css/bootstrap-tour.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/fonts.css' %}" rel="stylesheet">
+    <link href="{% static 'css/font-faces.css' %}" rel="stylesheet">
+    <link href="{% static 'css/font-awesome.css' %}" rel="stylesheet">
+
+
+    <script>
+$(document).bind('drop dragover', function (e) {
+     e.preventDefault();
+    });
+
+    </script>
+    
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-66872150-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+    <style>
+.ui-autocomplete {
+     z-index: 2000;
+}
+    body {
+      background:#E0E0E0;
+      font-family: 'Raleway',sans-serif;
+    }
+    .panel{
+  border-radius: 0px;
+}
+
+    </style>
+  </head>
+  
+{% include 'main_navbar.html' %}
+  <body>
+    
+
+
+    {% block content %}
+    
+    
+
+  
+  
+  
+  
+  
+  
+  {% endblock %}
+
+
+    <script type="text/javascript">
+      $(document).ready(function(){
+        
+        {% block jquery %}
+        
+        {% endblock %}
+      });
+      
+  $(function() {
+  $("#user-search").autocomplete({
+    source: "/api/main_search/",
+    minLength: 2,
+    select: function( event , ui ) {
+            document.location.href = ui.item.url ;
+        }
+    
+  });
+});
+
+function getNotificationCount() {
+      $.ajax({
+          type: "GET",
+          url: "/notifications/count/",
+          success: function(data){
+
+            if (data.count != 0) {
+             $(".badge-notify").css('background', 'red');
+      
+              $("#notifyCount").html(data.count);
+             }
+
+          },
+          error: function(rs, e) {
+            console.log(rs);
+            console.log(e);
+          }
+        })
+      
+
+    }
+    $(document).ready(function(){
+      getNotificationCount()
+      setTimeout(getNotificationCount, 5000); // 5 minutes
+      
+    })
+
+  $(document).ready(function(){
+    $('.notification-toggle').click(function(e){
+      e.preventDefault();
+      $.ajax({
+        type: "POST",
+        url: "/notifications/ajax/",
+        data: {
+          csrfmiddlewaretoken: "{{ csrf_token }}",
+        },
+        success: function(data){
+
+          $("#notification-dropdown").html('<li><h4>Notifications</h4></li>');
+          
+          $(data).slice(0,10).each(function(){
+            
+            
+            if (this.obj_id == 'None'){
+            $("#notification-dropdown").append("<li><a href='/notifications/read/"+this.note_id+"/?next=/profile/"+this.id+"' >"+ this.sender + " commented on your profile</a> </li>");
+            }
+            if (this.target == 'club'){
+            $("#notification-dropdown").append("<li><a href='/notifications/read/"+this.note_id+"/?next=/clubs/"+this.id+"' >"+ this.sender + " commented on "+this.club+"</a> </li>");
+            }
+            if (this.target == 'frat'){
+            $("#notification-dropdown").append("<li><a href='/notifications/read/"+this.note_id+"?next=/frats/"+this.id+"' >"+ this.sender + " commented on "+this.frat+"</a> </li>");
+            }
+
+            if (this.target == 'team'){
+            $("#notification-dropdown").append("<li><a href='/notifications/read/"+this.note_id+"?next=/teams/"+this.id+"' >"+ this.sender + " commented on "+this.team+"</a> </li>");
+            }
+            if (this.target == 'course'){
+            $("#notification-dropdown").append("<li><a href='/notifications/read/"+this.note_id+"?next=/courses/"+this.id+"' >"+ this.sender + " commented on "+this.course+"</a> </li>");
+            }
+          })
+
+
+        },
+
+        error: function(rs, e){
+          console.log(rs);
+          console.log(e);
+        }
+        })
+    })
+  });
+      
+    </script>
+
+    
+  </body>
+  
+</html>
+

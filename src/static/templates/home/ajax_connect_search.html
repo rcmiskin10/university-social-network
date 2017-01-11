@@ -1,0 +1,136 @@
+{% load staticfiles %}	
+
+	{% for course in courses %}
+		<h4><a href='/courses/{{ course.slug }}/'>{{ course.course_name }}</a></h4>
+		{{ course.course_num }}<br>
+		{{ course.course_time }}<br>
+		{{ course.course_professor }}
+		<hr>
+	{% endfor %}
+
+
+	{% for club in clubs %}
+                      <div class="media">
+                            <div class="media-left">
+                            {% if club.logo %}
+                            <img src='{{ club.logo.url }}' width="100" height="100" /><br>
+                            {% endif %}
+                            {% if not club.logo %}
+                            <img src='{% static "img/default-group.png" %}' width="100" height="100" /><br>
+                            {% endif %}
+                        </div>
+			           	   	<div class="media-body">
+                      <a href='/clubs/{{ club.id }}/'>{{ club.club_name }}</a><br>
+                      
+
+                      {{ club.description }}<br><br>
+                      Owner: <a href='/profile/{{ club.owner.id }}/'>{{ club.owner.first_name }} {{ club.owner.last_name }}</a>
+                    </div>
+                    <div class='media-right'>
+
+                       {% if not request.user in club.club_members.all %}
+                       <div id='club_member_{{ club.id }}'> 
+                      <form id='member' method='POST' action='/home/club_connect/'> {% csrf_token %}
+                        <input type='hidden' name='club_id' value='{{ club.id }}'>
+                        {{ club_form.as_p }}
+                        
+                        <input class='btn btn-success' type='submit' value='Connect'/>
+                      </form>
+                    </div>
+                      {% endif %}
+                      <div id='connected_{{ club.id }}'>
+
+                      </div>
+                      {% if request.user in club.club_members.all %}
+                      
+                      <img src='{% static "img/connect.png" %}' width="50" height="50" /><br>
+                      <p>Connected!</p>
+                      {% endif %}
+                    </div>
+
+                  </div>
+                      {% endfor %}
+
+         {% for team in teams %}
+          <div class="media">
+                <div class="media-left">
+                {% if team.logo %}
+                <img src='{{ team.logo.url }}' width="100" height="100" /><br>
+                {% endif %}
+                {% if not team.logo %}
+                <img src='{% static "img/default-group.png" %}' width="100" height="100" /><br>
+                {% endif %}
+            </div>
+          <div class="media-body">
+          <a href='/teams/{{ team.id }}/'>{{ team.name }}</a><br>
+          
+
+          {{ team.description }}<br><br>
+          Owner: <a href='/profile/{{ team.owner.id }}/'>{{ team.owner.first_name }} {{ team.owner.last_name }}</a>
+        </div>
+        <div class='media-right'>
+
+           {% if not request.user in team.team_members.all %}
+           <div id='team_member_{{ team.id }}'> 
+          <form id='team_member' method='POST' action='/home/team_connect/'> {% csrf_token %}
+            <input type='hidden' name='team_id' value='{{ team.id }}'>
+            {{ team_form.as_p }}
+            
+            <input class='btn btn-success' type='submit' value='Connect'/>
+          </form>
+        </div>
+          {% endif %}
+          <div id='team_connected_{{ team.id }}'>
+
+          </div>
+          {% if request.user in team.team_members.all %}
+          
+          <img src='{% static "img/connect.png" %}' width="50" height="50" /><br>
+          <p>Connected!</p>
+          {% endif %}
+        </div>
+
+      </div>
+          {% endfor %}
+
+       {% for frat in frats %}
+                      <div class="media">
+                            <div class="media-left">
+                            {% if frat.logo %}
+                            <img src='{{ frat.logo.url }}' width="100" height="100" /><br>
+                            {% endif %}
+                            {% if not frat.logo %}
+                            <img src='{% static "img/default-group.png" %}' width="100" height="100" /><br>
+                            {% endif %}
+                        </div>
+                      <div class="media-body">
+                      <a href='/frats/{{ frat.id }}/'>{{ frat.name }}</a><br>
+                      
+
+                      {{ frat.description }}<br><br>
+                      Owner: <a href='/profile/{{ frat.owner.id }}/'>{{ frat.owner.first_name }} {{ frat.owner.last_name }}</a>
+                    </div>
+                    <div class='media-right'>
+
+                       {% if not request.user in frat.members.all %}
+                       <div id='frat_member_{{ frat.id }}'> 
+                      <form id='frat_member' method='POST' action='/home/frat_connect/'> {% csrf_token %}
+                        <input type='hidden' name='frat_id' value='{{ frat.id }}'>
+                        {{ frat_form.as_p }}
+                        
+                        <input class='btn btn-success' type='submit' value='Connect'/>
+                      </form>
+                    </div>
+                      {% endif %}
+                      <div id='frat_connected_{{ frat.id }}'>
+
+                      </div>
+                      {% if request.user in frat.members.all %}
+                      
+                      <img src='{% static "img/connect.png" %}' width="50" height="50" /><br>
+                      <p>Connected!</p>
+                      {% endif %}
+                    </div>
+
+                  </div>
+                      {% endfor %}

@@ -1,0 +1,1298 @@
+
+{% extends 'base.html' %}
+{% load static from staticfiles %}
+{% load crispy_forms_tags %}
+{% block content %}
+<style>
+.child-comments{
+  display:none;
+}
+#main{
+	padding-top:75px;
+}
+.link-form {
+        display:none;
+   }
+.image-form {
+        display:none;
+   }
+
+#notes {
+        display:none;
+   }
+
+#class-info {
+        display:none;
+   }
+
+#list{
+	padding-top:0px;
+	padding-bottom:0px;
+	background-color:#E0E0E0;
+}
+.modal-dialog {
+    width: 900px;
+    margin: 30px auto;
+  }
+.modal {
+    overflow: hidden;
+    
+}
+.modal .modal-body {
+    height: 500px;
+    overflow: auto;
+}
+.modal .modal-fixed {
+    position: fixed;
+   
+}
+
+.assg{
+  background-color:#E0E0E0;
+  border: none;
+  color:black;
+
+}
+.stud_course{
+  background-color:white;
+  border: none;
+  color:black;
+
+}
+
+
+</style>
+<!--main-->
+<div class="container" id="main">
+   <div class="row">
+
+   <div class="col-md-3 col-sm-5">
+        <div class="panel panel-default">
+          
+   			<div style='text-align:center;'id='info-tour'class="panel-body">
+              
+	      		<h4>{{ course.course_name }}</h4>
+            <hr>
+	      		{{ course.course_num }}<br>
+	      		{{ course.course_time }}<br>
+	      		{{ course.course_professor }}<br>
+              <br>
+	      		{% if not request.user in course.students.all %}   
+			        <form id='student' method='POST' action='/student/{{ course.slug }}/'> {% csrf_token %}
+
+				        {{ course_form.as_p }}
+				        
+				        <input class='btn btn-success' type='submit' value='Connect'/>
+			        </form>
+
+    			{% endif %}
+          <div id='student_course'>
+
+          </div>
+	      		{% if request.user in course.students.all %}
+    				<h4>You are a member!</h4>
+
+				{% endif %}
+
+
+              
+            </div>
+   		</div>
+        
+     
+        <div class="panel panel-default">
+           
+   			<div id='classmates-tour' class="panel-body">
+               
+              
+           	<ul class='nav nav-pills nav-stacked'>
+            
+            <h4>Your Classmates</h4>
+            <hr>
+           {% for students in course.students.all %}
+            <li><a href='/profile/{{ students.id }}'><span class='badge pull-right'></span>
+            	{% for item in students.userpicture_set.all %}
+      				{% if item.image %}
+      					<img src='{{ item.image.url }}' class='img-circle' width="40" height="40" />
+      				{% endif %}
+              {% endfor %}
+              {% if not students.userpicture_set.all %}
+          
+                    <img class='img-circle' src='{% static "img/default-prof.png" %}' width="40" height="40" />
+                   
+            {% endif %}
+      			 
+      			{{ students.first_name }} {{ students.last_name }}
+      		</a></li>
+           {% endfor %}
+          
+          
+          </ul>
+              
+            </div>
+         </div> 
+
+	</div>
+
+
+  	<div class="col-md-6 col-sm-8">
+      	 
+          
+
+      	 <div class="panel panel-default">
+           
+   			<div class="panel-body">
+              <ul class="nav nav-pills nav-justified">
+ 
+                <li role="presenSastation" class="active"><a id='post-link' href="#">Class Posts</a></li>
+                <li role="presentation" ><a id='notes-link' href="#">Notes</a></li>
+              
+                
+                
+              </ul>
+              
+              
+              
+            </div>
+         </div>
+ <div id='posts'>     
+      	<div class="panel panel-default">
+<div class="panel-body">
+
+<a href='#' class='post'><img src="{% static 'img/text.png' %}" width="30" height="30"></a>
+<a href='#' class='tube'><img src="{% static 'img/youtube-icon.png' %}" width="30" height="30"></a>
+<a href='#' class='pic'><img src="{% static 'img/image.png' %}" width="25" height="25"></a>
+
+</div>
+<div class="panel-footer">
+    <div id='post-error'></div>
+<div class='main-form'>
+<form method='POST' action='/courses/{{ course.slug }}/' name='test' id='post-form' class='post-form' enctype='multipart/form-data'>{% csrf_token %}
+        <div class='input-group'>
+       
+            <input name='mypost' type='text' class='main form-control' placeholder='Have something to say?'>
+            
+            <span class='input-group-btn'>display: flex;
+            
+                
+                <button class=' btn btn-primary' type='submit'>Post</button>
+            </span>
+            
+        </div>
+        
+       
+</form>
+</div>
+<div class='link-form'>
+
+    <form id='link-post' class='link-post' method='POST' action='/link/{{ course.slug }}/' enctype='multipart/form-data'> {% csrf_token %}
+                
+                {% crispy link_mypost_form link_mypost_form.helper %}
+
+    </form>
+
+</div>
+
+<div class='image-form'>
+
+    <form id='image-post' class='image-post' method='POST' action='/image/{{ course.slug }}/' enctype='multipart/form-data'> {% csrf_token %}
+                
+                {% crispy image_mypost_form image_mypost_form.helper %}
+
+    </form>
+
+</div>
+<div style='color:red;' id='link-error'>
+   {{ form.non_field_errors }}
+
+</div>
+
+
+</div><!--panel-footer-->
+</div> <!--default panel-->
+
+<table class='table'>
+   
+   <div id='this_post'>
+    
+    </div> 
+    
+{% for post in posts %}
+    
+  <div id='post_{{ post.id }}' >
+   
+    <div class="panel panel-default">
+            <div class='panel-body'> 
+                <div class="media">
+
+                {% for item in post.user.userpicture_set.all %}
+                    
+                    {% if item.image %}
+                        
+                            <div class="media-left">
+                            <img src='{{ item.image.url }}' width="40" height="40" />
+                        </div>
+                        
+                    {% endif %}
+                {% endfor %}
+                    {% if not post.user.userpicture_set.all %}
+           <div class="media-left">
+                    <img style='float:left' src='{% static "img/default-prof.png" %}' width="40" height="40" />
+                    </div>
+            {% endif %}
+                
+            
+
+                    <div class="media-body">
+                    
+                        <a href='/profile/{{ post.user.id }}/'>
+                        <b>{{ post.user.first_name }} {{ post.user.last_name }}</b>
+                        </a>
+                        <br>
+                        <small>{{ post.timestamp }}</small>
+                    </div>
+
+                    
+                    {% if post.event %}
+                    <div class='media-right'>
+                      
+                      {% if post.event == 'Party' %}
+                       <img src='{% static "img/party.png" %}' width="50" height="50" />
+                       {% endif %}
+                       {% if post.event == 'Game' %}
+                       <img src='{% static "img/sports.png" %}' width="50" height="50" />
+                       {% endif %}
+                       {% if post.event == 'General Event' %}
+                       <img src='{% static "img/event.png" %}' width="40" height="50" />
+                       {% endif %}
+                    </div>
+                    {% endif %}
+                    {% if post.user == request.user %}
+                    <div class='media-right'>
+                    <form id='delete_post' method='POST' action='/delete_post/'>{% csrf_token %}
+                          <input type='submit' class='stud_course btn btn-primary btn-xs' value='Delete Post'>
+                         <input type='hidden' value='{{ post.id }}' name='post_id'>
+                    </form><br>
+                  </div><!--media-right-->
+                  {% endif %}
+
+                    </div>
+                    
+                    {% if post.links %}
+                    <br>
+                    <iframe style='padding-bottom:20px;'class="col-lg-12 col-md-12 col-sm-12 col-xs-12"  height="315" src="{{ post.links }}" frameborder="0" allowfullscreen></iframe>
+                
+                    {% endif %}
+
+                    {% if post.image %}
+                    <br>
+                    <img style='padding-bottom:20px;' class="col-lg-12 col-md-12 col-sm-12 col-xs-12" src='{{ post.image.url }}' height="315" />
+                
+                    {% endif %}
+            {% if post.event %}
+            <h4>{{ post.event }} - <small style='color:black;'>{{ post.date }} @ {{ post.start_time }} - {{ post.end_time }}</small></h4> 
+            {% endif %}   
+        <br>{{ post.get_mypost|linebreaksbr }} 
+
+            </div><!-- panel-body-->
+            
+            <div class="panel-footer">
+            
+            {% if not post.is_child %}
+        
+            
+                <div id='reply_post_{{ post.id }}'>
+                
+                </div>
+                <div id='limit-child-comments_{{ post.id }}'>
+                {% for child in post.get_children|slice:":4" %}
+                  <div class="media">
+                    {% for item in child.user.userpicture_set.all %}
+                    {% if item.image %}<div class="media-left"> <img src='{{ item.image.url }}' class='media-object' width="40" height="40" /> </div>{% endif %}{% endfor %}{% if not child.user.userpicture_set.all %}<div class="media-left"><img class='media-object' src='{% static "img/default-prof.png" %} ' width="40" height="40" /> </div>{% endif %} <div class="media-body"> <small><b><a href='/profile/{{ child.user.id }}/'>{{ child.user.first_name }} {{ child.user.last_name}}</a></b></small> <small>{{ child.get_mypost|linebreaksbr }}</small><br><small>{{child.timestamp}}</small></div>
+                  </div>
+                {% endfor %}
+              </div><!--child-comments-->
+              <div id='child-comments_{{ post.id }}' class='child-comments'>
+                  {% for child in post.get_children %}
+
+                    <div class="media">
+                    {% for item in child.user.userpicture_set.all %}
+                    {% if item.image %}<div class="media-left"> <img src='{{ item.image.url }}' class='media-object' width="40" height="40" /> </div>{% endif %}{% endfor %}{% if not child.user.userpicture_set.all %}<div class="media-left"><img class='media-object' src='{% static "img/default-prof.png" %} ' width="40" height="40" /> </div>{% endif %} <div class="media-body"> <small><b><a href='/profile/{{ child.user.id }}/'>{{ child.user.first_name }} {{ child.user.last_name}}</a></b></small> <small>{{ child.get_mypost|linebreaksbr }}</small><br><small>{{child.timestamp}}</small></div>
+                  </div>
+
+                {% endfor %}
+
+                </div>
+                <br>
+                {% if post.get_children.count > 4 %}
+                <a href='#' class='all' id='{{ post.id }}'>See all</a>
+                {% endif %}
+                
+          
+                
+          
+            {% endif %}
+        
+                <form style='padding-top:10px;' method='POST' action='/home/' name='test' id='reply_form_{{ post.id }}' class='reply_form_{{ post.id }}' enctype='multipart/form-data'> {% csrf_token %}
+                    <input type='hidden' name='parent_id' value='{{ post.id }}'>
+                    <div class='input-group'>
+                            {% for item in request.user.userpicture_set.all %}
+                            {% if item.image %}
+                                <img style='float:left' src='{{ item.image.url }}' width='35' height='35'/>
+                                {% endif %}
+                                {% endfor %}
+                                {% if not request.user.userpicture_set.all %}
+           
+                    <img style='float:left' src='{% static "img/default-prof.png" %}' width="35" height="35" />
+                    
+            {% endif %}
+
+                            
+                            
+                            <div style='overflow: hidden; padding-left: .5em;'>
+                                <input name='mypost' type='text' class='form-control' placeholder='Reply to comment'>
+                            </div>
+                        <span class='input-group-btn'><button class='btn btn-primary' type='submit'>Post</button></span>
+                    </div><!--div input-group-->
+                </form>
+                
+            </div><!--div panel-footer-->
+        </div><!--div panel-panel-default-->
+        
+    
+          
+       
+        
+        
+        
+        
+    <br>
+  </div>
+{% endfor %}
+ 
+
+</table>
+</div><!--posts id-->
+
+<div id='notes'>
+<div class="panel panel-default">
+<div  class='panel-body'> 
+  <h4>Add Note</h4>
+  <div id='note-error'></div>
+  <br>
+<form style='text-align:center;' id='note-form' method='POST' action='/add_note/' enctype="multipart/form-data"> {% csrf_token %}
+                    
+                    
+                     {{ add_note_form|crispy }}
+
+                    <input class='btn btn-primary' type='submit' value='Add Note'/>
+            </form>
+</div>
+</div>
+
+<table class='table'>
+   
+   <div id='this_note'>
+    
+    </div> 
+    
+{% for note in notes %}
+    
+    
+   
+    <div class="panel panel-default">
+            <div class='panel-body'> 
+                
+              <div class="media">
+                {% for item in note.user.userpicture_set.all %}
+                    
+                    {% if item.image %}
+                        
+                            <div class="media-left">
+                            <img src='{{ item.image.url }}' width="40" height="40" />
+                        </div>
+                        
+                    {% endif %}
+                {% endfor %}
+                    {% if not note.user.userpicture_set.all %}
+                    <div class="media-left">
+                      <img  src='{% static "img/default-prof.png" %}' width='40' height='40'/>
+                      </div>
+                      {% endif %}
+                
+            
+                    
+                    <div class="media-body">
+                    
+                        <a href='/profile/{{ note.user.id }}/'>
+                        <b>{{ note.user.first_name }} {{ note.user.last_name }}</b>
+                        </a>
+                        <br>
+                        <small>{{ note.timestamp }}</small>
+                    </div>
+                    
+                    </div>
+                 
+                    
+             <br> {{ note.text|linebreaksbr }} 
+             <br>
+            </div><!-- panel-body-->
+            
+            
+        </div><!--div panel-panel-default-->
+        
+    
+          
+       
+        
+        
+        
+        
+    <br>
+  
+{% endfor %}
+ 
+
+</table>
+</div><!--notes-->
+
+
+
+
+
+  	</div><!--col-->
+
+
+  	<div class="col-md-3 col-sm-5">
+         <div class="panel panel-default">
+           
+   			<div style='text-align:center;' id='syllabus-tour' class="panel-body">
+              <h4  style="text-align:center;">Class Syllabus<br><small>Add your syllabus here</small></h4>
+
+              <hr>
+              <div id='syllabus-form'>
+
+              </div>
+
+
+              <form style="text-align:center;"id='syllabus' class='syllabus' method='POST' action='/courses/{{ course.slug }}/' enctype='multipart/form-data'> {% csrf_token %}
+              
+                
+              {{ formset_syl.as_p }}
+              {{ formset_syl.management_form }}
+              
+              
+              
+              <input class='btn btn-success' id='syl-sub' name='syllabus' type='submit' value='Add'/>
+              </form>
+              <br>
+              <a style='text-align:center;' target='_blank' href='http://pdf2docx.com/'>Convert a PDF to DOCX here!</a>
+              <br>
+              {% if syllabus %}
+                <a style='text-align:center;' href='#' data-toggle="modal" data-target="#myModalSyllabus"><h4>Open Your Syllabus</h4></a>
+                <br>
+                
+              {% endif %}
+
+              
+              {% for item in g %}
+
+
+                
+              <div id='assign_{{ item.0 }}' class="panel panel-default">
+                        
+                <div id ='list'class="panel-body">
+
+                  <div style='display:flex;'class="row">
+                      <div style='color:white;background-color:red;'class='col-lg-4'>
+                          <h5>{{ item.1 }}</h5>
+                      </div>
+                        <div style='background-color:#E0E0E0;' class='col-lg-8'>
+                          
+                          {{ item.2 }}
+                          <form id='delete' method='POST' action='/delete_assign/'>{% csrf_token %}
+                          <input style="position:absolute;bottom:5px;right:5px;margin:0;padding:5px 3px;" type='submit' class='assg btn btn-primary btn-xs' value='X'>
+                         <input type='hidden' value='{{ item.0 }}' name='assign_id'></form>
+
+                        </div>
+                  </div>
+                      
+                </div>
+
+              </div>
+
+              {% endfor %}
+              {% if g %}
+                 <div style='text-align:center;'class="pagination">
+    <span class="step-links">
+        {% if g.has_previous %}
+            <a id='previous' href="?page={{ g.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ g.number }} of {{ g.paginator.num_pages }}.
+        </span>
+
+        {% if g.has_next %}
+            <a id='next' href="?page={{ g.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>     
+{% endif %}      
+
+        </div>
+
+
+   		</div>
+ 
+   		
+   		<div class="modal fade" id="myModalSyllabus" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div style='background-color:#E0E0E0;'class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        
+        <h1>{{ course.course_name }} - Syllabus</h1>
+        
+        <div id='assign-calendar'>
+
+          </div>
+        
+      </div>
+      <div class="modal-body">
+      	
+                    <div class="row">
+                       <div class="col-lg-7">
+                          <div id='article'>
+                            
+       {{ syllabus.html|safe }}
+   </div>
+   </div>
+                    	<div class="col-lg-2">
+
+
+        	<div class='modal-fixed'>
+
+
+        	<div  id='test'>
+            <a href='#' class='due-date'> Assignment Due Date</a><br>
+            <a href='#' class='name'> Assignment Name</a>
+          </div>
+
+           
+       
+        	</div>
+
+    </div>
+<div class="col-lg-3">
+<div style='text-align:center;'class='modal-fixed'>
+
+      <form id='assign' class='assign' method='POST' action='/assign/{{ course.slug }}/'>{% csrf_token %}
+         
+            <div class="form-group">
+              {{ assignment_form }}
+            </div>
+          <button class='btn btn-primary' type='submit'>Post</button>
+
+        </form>
+      
+       <div style='color:red;' class='syl-error'>
+
+       </div>                  
+ <br>
+  <div style='text-align:center;' class="panel-body">
+          <h4>New to Student Grounds?</h4>
+          <h5>Click here to take a short tour of our Syllabus Page features.<h5><br>
+          <a id='tour-syllabus-link' href='#'><button class='btn btn-primary' type='button'>Tour</button></a>
+        </div><!--panel-body--> 
+</div>
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="panel panel-default">
+           
+        <div style='text-align:center;' class="panel-body">
+          <h4>New to Student Grounds?</h4>
+          <h5>Click here to take a short tour of our Course Page features.<h5><br>
+          <a id='tour-link' href='#'><button class='btn btn-primary' type='button'>Tour</button></a>
+        </div><!--panel-body-->
+
+      </div><!--panel-default-->
+
+ 
+        
+  </div><!--/row-->
+  
+  
+</div><!--/main-->
+
+<script>
+$('.all').click(function(e){
+  e.preventDefault();
+  var id = $(this).attr('id');
+  $("#limit-child-comments_" + id).hide();
+  $(this).hide();
+  
+  $('#child-comments_' + id).fadeToggle();
+  
+  //$(this).next('.about-me').fadeToggle();
+
+})
+
+$('#tour-syllabus-link').click(function(e){
+  
+var tour = new Tour({
+  steps: [
+  
+ 
+  {
+    element: "#article",
+    title: "Highlight assignment.",
+    content: "When you highlight your assignment, 'Assignment Due Date' and 'Assignment Name' will pop up. Try it now! Click either one to input it into the form.",
+    backdrop: false,
+    placement: 'top',
+  },
+ 
+  
+
+
+  
+  
+]});
+
+// Initialize the tour
+tour.init();
+
+// Start the tour
+tour.start();
+tour.restart();
+});
+$('#tour-link').click(function(e){
+  
+var tour = new Tour({
+  steps: [
+  
+  {
+    
+    title: "Welcome!",
+    content: "Welcome to the Course Page! Here's a quick tour.",
+    backdrop: true,
+    orphan: true,
+  },
+ 
+  {
+    element: "#classmates-tour",
+    title: "Your classmates.",
+    content: "Here you'll find who's in your class. Personally message them by clicking on their name.",
+    backdrop: true,
+    placement: 'right',
+  },
+  {
+    element: "#post-link",
+    title: "Class Posts.",
+    content: "Have a question, comment or concern? Want to help out your classmates? Post and share pictures or videos here!",
+    backdrop: true,
+    placement: 'bottom',
+  },
+{
+    element: "#notes-link",
+    title: "Class Notes.",
+    content: "Share your class notes with two easy steps!",
+    backdrop: true,
+    placement: 'bottom',
+  },
+  
+   {
+    element: "#syllabus-tour",
+    title: "Add a syllabus.",
+    content: "Here you can add the course syllabus to your course page. Once added, click “open your syllabus” to add assignments and due dates right into your SG schedule! Look for directions when you open your syllabus!",
+    backdrop: true,
+    placement: 'left',
+  },
+  
+
+
+  
+  
+]});
+
+// Initialize the tour
+tour.init();
+
+// Start the tour
+tour.start();
+tour.restart();
+});
+
+var t = '';
+function gText(e) {
+
+    t = (document.all) ? document.selection.createRange().text : document.getSelection();
+    if (String(t).length < 1){
+      $('#test').fadeOut()
+    }
+    else{
+
+      $('#test').fadeIn(1000);
+      
+      var elements = document.getElementsByTagName("a");
+      for(var i=0; i<elements.length; i++){
+          if (elements[i].className == 'due-date') { 
+              elements[i].onclick = function(){ 
+              document.getElementById('id_due_date').value = t; 
+               }
+             } 
+
+          if (elements[i].className == 'name') { 
+              elements[i].onclick = function(){ 
+              document.getElementById('id_name').value = t; 
+               }
+             }
+            }
+           
+    
+        
+      
+      
+      
+      
+      if (String(t).length < 1){
+      $('#test').fadeOut()
+    }
+
+    }
+    
+}
+
+document.onmouseup = gText;
+if (!document.all) document.onmouseup;
+
+$('#myModalSyllabus').on('hidden.bs.modal', function () {
+document.location.reload();
+})
+
+$('#post-link').click(function(e){
+  
+  e.preventDefault();
+  $("#notes").hide();
+  $("#class-info").hide();
+  $('#posts').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+  
+})
+
+$('#notes-link').click(function(e){
+  
+  e.preventDefault();
+  $("#posts").hide();
+  $("#class-info").hide();
+  $('#notes').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+  
+})
+
+$('#class-info-link').click(function(e){
+  
+  e.preventDefault();
+  $("#posts").hide();
+  $("#notes").hide();
+  $('#class-info').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+  
+})
+
+
+$('.tube').click(function(e){
+  
+  e.preventDefault();
+  $(".main-form").hide();
+  $(".image-form").hide();
+  $('.link-form').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+  
+})
+$('.post').click(function(e){
+  
+  e.preventDefault();
+  $(".link-form").hide();
+  $(".image-form").hide();
+  $('.main-form').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+  
+})
+$('.pic').click(function(e){
+  
+  e.preventDefault();
+  $(".link-form").hide();
+  $(".main-form").hide();
+  $('.image-form').fadeToggle();
+  //$(this).next('.about-me').fadeToggle();
+  
+});
+
+
+
+$('form').live('submit', function(event) {
+
+    event.preventDefault();
+    
+    var $form = $(this);
+    var id = $form.attr('id');
+    var formData = $form.serialize();
+    
+
+    if ($form.attr("id") == "delete_post"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_post/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                id = json.id
+                $("#post_" + id).hide();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+
+    if ($(this).attr("id") == "note-form"){
+
+    $.ajax({
+        type: "POST",
+        url: "/add_note/{{ course.slug }}/",
+        dataType: "json",
+        data: formData,
+        
+        success: function (json) {
+          var $response = json.response;
+            if ($response){
+            
+            if (json.image == 'None'){
+            var str = '{% static "img/default-prof.png" %}'}
+            if (json.image == 'Yes'){
+              var str = json.image_url
+            }
+            if (json.request_image == 'None'){
+            var req_str = '{% static "img/default-prof.png" %}'}
+            if (json.request_image == 'Yes'){
+              var req_str = json.request_image_url
+            }
+            $("#this_note").prepend($("<div class='panel panel-default'><div class='panel-body'><div class='media'><div class='media-left'><img src='"+str+"' class='media-object' width='40' height='40'/></div><div class='media-body'><a href='/members/"+json.user+"/'> <b>"+json.first_name+" "+json.last_name+"</b></a><br><small>"+json.created+"</small></div><br>"+json.text+"</div></div></div>").fadeIn(500));
+            $("#note-form")[0].reset();
+            console.log(json.text)
+          }
+          else{
+            $("#note-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div></div>")).fadeIn(3000).fadeOut(4000);
+                $('#note-form')[0].reset();
+          }
+        },
+        error: function(data) {
+            $("#this_post").html("Something went wrong!");
+        }
+    });
+    }
+
+    if ($form.attr("id") == "student"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/student/{{ course.slug }}/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                document.location.reload();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    
+    if ($form.attr("id") == "delete"){
+    
+    $.ajax({
+        type: "POST",
+        url: "/delete_assign/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+                id = json.id
+                $("#assign_" + id).hide();
+                
+            
+             
+
+        },
+        error: function(data) {
+          $(".syl-error").html("All fields are required. Make sure your date is actually a DATE!").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "assign"){
+   
+    $.ajax({
+        type: "POST",
+        url: "/assign/{{ course.slug }}/",
+        dataType: "json",
+        data: formData,
+        
+        
+        success: function (json) {
+            
+            
+            
+                $("#assign-calendar").prepend($("<div class='alert alert-success' role='alert'>Assignment added - "+json.due_date+" - "+json.name+"</div>").fadeIn(500)).fadeOut(6000);
+                $('.assign')[0].reset();
+
+                console.log(json.name);
+                console.log(json.due_date);
+            
+             
+
+        },
+        error: function(data) {
+          $("#assign-calendar").html("<div class='alert alert-danger' role='alert'>All fields are required. Make sure your date is actually a DATE!</div>").fadeIn(2000).fadeOut(6000);
+            
+        }
+    });
+    }
+
+    if ($form.attr("id") == "syllabus"){
+    var formData = new FormData(this);
+    $.ajax({
+        type:'POST',
+        url: "/syllabus/{{ course.slug }}/",
+        data:formData,
+        cache:false,
+        contentType: false,
+        processData: false,
+        
+        success: function (json) {
+            
+            var $response = json.response;
+            if ($response){
+            
+                
+               
+                $("#syllabus-form").html($("<div class='alert alert-success' role='alert'>Syllabus added</div>").fadeIn(500));
+            
+                setTimeout(function(){
+               document.location.reload();
+            }, 2000);
+                
+                console.log(json.text)
+            }
+
+            else{
+              $("#syllabus-form").html($("<div class='alert alert-danger' role='alert'>Need to select a .docx file.</div>").fadeIn(500));
+                
+                setTimeout(function(){
+               document.location.reload();
+            }, 2000);
+            }
+             
+
+        },
+        error: function(data) {
+            $("#syllabus-form").prepend($("<div class='alert alert-danger' role='alert'>Need to select a .docx file.</div>").fadeIn(2000));
+                $('.syllabus')[0].reset();
+        }
+    });
+    }
+
+    if ($form.attr("id") == "image-post"){
+    var formData = new FormData(this);
+    $.ajax({
+        type:'POST',
+        url: "/image/{{ course.slug }}/",
+        data:formData,
+        cache:false,
+        contentType: false,
+        processData: false,
+        
+        success: function (json) {
+          var $response = json.response
+            if ($response){
+            console.log(json.image_post)
+            if (json.image == 'None'){
+            var str = '{% static "img/default-prof.png" %}'}
+            if (json.image == 'Yes'){
+              var str = json.image_url
+            }
+            if (json.request_image == 'None'){
+            var req_str = '{% static "img/default-prof.png" %}'}
+            if (json.request_image == 'Yes'){
+              var req_str = json.request_image_url
+            }
+            
+                $("#this_post").prepend($("<div class='panel panel-default'><div class='panel-body'><div class='media'><div class='media-left'><img src='"+str+"' class='media-object' width='40' height='40'/></div><div class='media-body'><a href='/members/"+json.user+"/'> <b>"+json.first_name+" "+json.last_name+"</b></a><br><small>"+json.created+"</small></div><br><img style='padding-bottom:20px;' class='col-lg-12 col-md-12 col-sm-12 col-xs-12' src='"+json.image_post+"' height='315' /><br>"+json.text+"</div></div><div class='panel-footer'><div id='reply_ajax_"+json.id+"'></div><form style='padding-top:10px;'method='POST' action='/profile/{{ single_user.id }}/' name='example' id='ajax_"+json.id+"' class='reply_form' enctype='multipart/form-data'> {% csrf_token %}<input type='hidden' name='parent_id' value='"+json.id+"'><div class='input-group'><img style='float:left' src='"+req_str+"' width='35' height='35'/><div style='overflow: hidden; padding-left: .5em;'><input name='mypost' type='text' class='form-control' placeholder='Reply to comment'></div><span class='input-group-btn'><button class='btn btn-primary' type='submit'>Post</button></span></form></div></div></div>").fadeIn(500));
+                $('.image-post')[0].reset()
+                console.log(json.text)
+            }
+            else{
+              $("#post-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div></div>")).fadeIn(3000).fadeOut(4000);
+                $('#image-post')[0].reset();
+            }
+             
+
+        },
+        error: function(data) {
+            $("#this_post").html("Something went wrong!");
+        }
+    });
+    }
+
+
+    if ($form.attr("id") == "link-post"){
+
+    $.ajax({
+        type: "POST",
+        url: "/link/{{ course.slug }}/",
+        dataType: "json",
+        data: formData,
+        
+        success: function (json) {
+            var id = json.id
+            console.log(id)
+            
+            console.log(json.link)
+            var $response = json.response
+            if ($response){
+            if (json.image == 'None'){
+            var str = '{% static "img/default-prof.png" %}'}
+            if (json.image == 'Yes'){
+              var str = json.image_url
+            }
+            if (json.request_image == 'None'){
+            var req_str = '{% static "img/default-prof.png" %}'}
+            if (json.request_image == 'Yes'){
+              var req_str = json.request_image_url
+            }
+                $("#this_post").prepend($("<div class='panel panel-default'><div class='panel-body'><div class='media'><div class='media-left'><img src='"+str+"' class='media-object' width='40' height='40'/></div><div class='media-body'><a href='/members/"+json.user+"/'> <b>"+json.first_name+" "+json.last_name+"</b></a><br><small>"+json.created+"</small></div><br><iframe style='padding-bottom:20px;'class='col-lg-12 col-md-12 col-sm-12 col-xs-12'  height='315' src='"+json.link+"' frameborder='0' allowfullscreen></iframe><br>"+json.text+"</div></div><div class='panel-footer'><div id='reply_ajax_"+json.id+"'></div><form style='padding-top:10px;'method='POST' action='/courses/{{ course.slug }}/' name='example' id='ajax_"+json.id+"' class='reply_form' enctype='multipart/form-data'> {% csrf_token %}<input type='hidden' name='parent_id' value='"+json.id+"'><div class='input-group'><img style='float:left' src='"+req_str+"' width='35' height='35'/><div style='overflow: hidden; padding-left: .5em;'><input name='mypost' type='text' class='form-control' placeholder='Reply to comment'></div><span class='input-group-btn'><button class='btn btn-primary' type='submit'>Post</button></span></form></div></div></div>").fadeIn(500));
+                $('.link-post')[0].reset()
+                console.log(json.text)
+                console.log(json.input_link)
+            }
+            else {
+                  $("#post-error").html($("<div class='alert alert-danger' role='alert'>Must be a YouTube url. Please fill in all fields!</div></div>")).fadeIn(3000).fadeOut(4000);
+                $('#link-post')[0].reset();
+            }
+
+        },
+        error: function(data) {
+            $("#this_post").html("Something went wrong!");
+            console.log(data.text);
+        }
+    });
+    }
+    
+    if ($(this).attr("id") == "post-form"){
+
+    $.ajax({
+        type: "POST",
+        url: "/courses/{{ course.slug }}/",
+        dataType: "json",
+        data: formData,
+        
+        success: function (json) {
+            var $response = json.response
+            if ($response){
+                  if (json.image == 'None'){
+            var str = '{% static "img/default-prof.png" %}'}
+            if (json.image == 'Yes'){
+              var str = json.image_url
+            }
+            if (json.request_image == 'None'){
+            var req_str = '{% static "img/default-prof.png" %}'}
+            if (json.request_image == 'Yes'){
+              var req_str = json.request_image_url
+            }
+            $("#this_post").prepend($("<div class='panel panel-default'><div class='panel-body'><div class='media'><div class='media-left'><img src='"+str+"' class='media-object' width='40' height='40'/></div><div class='media-body'><a href='/profile/{{ single_user.id }}/'> <b>"+json.first_name+" "+json.last_name+"</b></a><br><small>"+json.created+"</small></div><br>"+json.text+"</div></div><div class='panel-footer'><div id='reply_ajax_"+json.id+"'></div><form style='padding-top:10px;'method='POST' action='/profile/{{ single_user.id }}/' name='example' id='ajax_"+json.id+"' class='reply_form' enctype='multipart/form-data'> {% csrf_token %}<input type='hidden' name='parent_id' value='"+json.id+"'><div class='input-group'><img style='float:left' src='"+req_str+"' width='35' height='35'/><div style='overflow: hidden; padding-left: .5em;'><input name='mypost' type='text' class='form-control' placeholder='Reply to comment'></div><span class='input-group-btn'><button class='btn btn-primary' type='submit'>Post</button></span></form></div></div></div>").fadeIn(500));
+            $(".post-form")[0].reset();
+            console.log(json.text)
+          }
+          else{
+            $("#post-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div>")).fadeIn(3000).fadeOut(4000);
+                $('#post-form')[0].reset();
+          }
+        },
+        error: function(data) {
+            $("#this_post").html("Something went wrong!");
+        }
+    });
+    }
+
+
+
+    if ($(this).attr('id').indexOf('reply_form') > -1 ){
+        
+    $.ajax({
+        type: "POST",
+        url: "/courses/{{ course.slug }}/",
+        dataType: "json",
+        data: formData,
+        
+        success: function (json) {
+          var $response = json.response
+            if ($response){
+          if (json.image == 'None'){
+            var str = '{% static "img/default-prof.png" %}'}
+            if (json.image == 'Yes'){
+              var str = json.image_url
+            }
+            if (json.request_image == 'None'){
+            var req_str = '{% static "img/default-prof.png" %}'}
+            if (json.request_image == 'Yes'){
+              var req_str = json.request_image_url
+            }
+            var id = json.parent_id
+            console.log(id)
+           $('#reply_post_' + id).prepend($("<div class='media'><div class='media-left'><img src='"+str+"' class='media-object' width='40' height='40' /></div><div class='media-body'> <small><b>"+json.first_name+" "+json.last_name+"</b></small> <small> "+json.text+" </small><br><small>"+json.created+"</small></div></div> ").fadeIn(500));
+            $('.reply_form_'+id)[0].reset()
+            console.log(json.text)
+          }
+          else{
+            $("#post-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div></div>")).fadeIn(3000).fadeOut(4000);
+          }
+        },
+        error: function(data) {
+            $("#this_post").html("Something went wrong!");
+        }
+    });
+    
+    }
+
+    if ($(this).attr('id').indexOf('ajax') > -1 ){
+        
+    $.ajax({
+        type: "POST",
+        url: "/courses/{{ course.slug }}/",
+        dataType: "json",
+        data: formData,
+        
+        success: function (json) {
+          var $response = json.response
+            if ($response){
+          if (json.image == 'None'){
+            var str = '{% static "img/default-prof.png" %}'}
+            if (json.image == 'Yes'){
+              var str = json.image_url
+            }
+            if (json.request_image == 'None'){
+            var req_str = '{% static "img/default-prof.png" %}'}
+            if (json.request_image == 'Yes'){
+              var req_str = json.request_image_url
+            }
+            var id = json.parent_id;
+            console.log(id);
+           $('#reply_ajax_'+ id).prepend($("<div class='media'><div class='media-left'> <img src='"+str+"' class='media-object' width='40' height='40' /></div><div class='media-body'> <small><b>"+json.first_name+" "+json.last_name+"</b></small> <small>"+json.text+"</small><br><small>"+json.created+"</small></div> </div>").fadeIn(500));
+            $('.reply_form')[0].reset()
+            console.log(json.text);
+          }
+          else{
+            $("#post-error").html($("<div class='alert alert-danger' role='alert'>Please fill in all fields!</div></div>")).fadeIn(3000).fadeOut(4000);
+          }
+        },
+        error: function(data) {
+            $("#this_post").html("Something went wrong!");
+        }
+    });
+    
+    }
+
+
+    });
+
+
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+var csrftoken = getCookie('csrftoken');
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+
+}
+
+function sameOrigin(url) {
+    // test that a given url is a same-origin URL
+    // url could be relative or scheme relative or absolute
+    var host = document.location.host; // host + port
+    var protocol = document.location.protocol;
+    var sr_origin = '//' + host;
+    var origin = protocol + sr_origin;
+    // Allow absolute or scheme relative URLs to same origin
+    return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+        // or any other URL that isn't scheme relative or absolute i.e relative.
+        !(/^(\/\/|http:|https:).*/.test(url));
+}
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
+
+
+</script>
+{% endblock %}
